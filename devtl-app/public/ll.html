@@ -1,0 +1,92 @@
+<html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="js/leader-line.min.js"></script>
+<script>
+
+
+  $( function() {
+
+    $( "#draggable" ).draggable({
+        drag: function(){
+            var offset = $(this).offset();
+            var xPos = offset.left;
+            var yPos = offset.top;
+            $('#posX').text('x: ' + xPos);
+            $('#posY').text('y: ' + yPos);
+            var newPosition = {};
+            newPosition.left = offset.left;
+            newPosition.top = offset.top;
+
+            if (newPosition.left > islandBBox.left && newPosition.left < islandBBox.right &&
+                  newPosition.top > islandBBox.top && newPosition.top < islandBBox.bottom) {
+                if (this.left <= islandBBox.left) {
+                  newPosition.left = islandBBox.left;
+                } else if (this.left >= islandBBox.right) {
+                  newPosition.left = islandBBox.right;
+                }
+                if (this.top <= islandBBox.top) {
+                  newPosition.top = islandBBox.top;
+                } else if (this.top >= islandBBox.bottom) {
+                  newPosition.top = islandBBox.bottom;
+                }
+            }
+            line.position();
+        }
+    });
+
+    var ELEMENT_SIZE = 60,
+    startElement = document.getElementById('abc'),
+    line = new LeaderLine(startElement, document.getElementById('draggable'), {path: 'grid'}),
+    islandBBox = document.getElementById('draggable').getBoundingClientRect();
+
+      islandBBox = {
+        left: islandBBox.left + window.pageXOffset ,
+        top: islandBBox.top + window.pageYOffset ,
+        right: islandBBox.right + window.pageXOffset,
+        bottom: islandBBox.bottom + window.pageYOffset
+      };
+
+  });
+
+        function zoomin() {
+            var GFG = document.getElementById("child");
+            var currWidth = GFG.clientWidth;
+            GFG.style.width = (currWidth + 100) + "px";
+        }
+
+        function zoomout() {
+            var GFG = document.getElementById("child");
+            var currWidth = GFG.clientWidth;
+            GFG.style.width = (currWidth - 100) + "px";
+        }
+  </script>
+ <style type="text/css">
+     /*.parent:hover .child,
+.parent:focus .child {
+  transform: scale(1.2);
+}*/
+ </style>
+
+<body>
+    <div class="row m-2 p-4">
+        <button type="button" class="btn btn-primary" onclick="zoomin()">+</button> &nbsp;
+        <button type="button" class="btn btn-primary" onclick="zoomout()">-</button>
+    </div>
+    <div class="parent">
+        <div class="child p-4" id="child" style="height: 100%; width: 100%; background-image: url('images/square-grid.svg');">
+            <div id="abc" class="m-4" style="height: 100px; width: 200px;border: 1px solid black;">
+                div 1
+            </div>
+            <div class="def" id="draggable" style="height: 100px; margin-top: 100px; width: 200px; margin-top:100px;border: 1px solid black;">
+                div 2
+                <li id="posX"></li>
+                <li id="posY"></li>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

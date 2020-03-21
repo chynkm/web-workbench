@@ -20,3 +20,9 @@ Route::get('/', function () {
 Route::get('/test', function () {
     return view('test');
 });
+
+Auth::routes(['verify' => true]);
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+});

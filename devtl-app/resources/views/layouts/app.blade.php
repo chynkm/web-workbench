@@ -6,7 +6,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name') }}</title>
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- Bootstrap core CSS -->
@@ -16,27 +16,41 @@
         <link href="css/custom.css" rel="stylesheet">
     </head>
     <body>
-        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-            <h5 class="my-0 mr-md-auto font-weight-normal">Company name</h5>
-            <nav class="my-2 my-md-0 mr-md-3">
-                <a class="p-2 text-dark" href="#">Features</a>
-                <a class="p-2 text-dark" href="#">Enterprise</a>
-                <a class="p-2 text-dark" href="#">Support</a>
-                <a class="p-2 text-dark" href="#">Pricing</a>
+        <div class="navbar navbar-expand-md p-3 px-md-4 mb-3 bg-white border-bottom">
+            <a class="navbar-brand" href="#">{{ config('app.name') }}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="oi oi-menu"></span>
+            </button>
+            <nav class="collapse navbar-collapse my-2 my-md-0 mr-md-3" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Features <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Enterprise</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Support</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="#">Sign up</a>
+                    </li>
+                </ul>
             </nav>
-            <a class="btn btn-outline-primary" href="#">Sign up</a>
         </div>
-        <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-            <h1 class="display-4">Pricing</h1>
-            <p class="lead">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It's built with default Bootstrap components and utilities with little customization.</p>
-        </div>
-        <div class="container">
+
+        <div class="main-content">
             @yield('content')
         </div>
 
         <footer class="footer">
             <div class="container">
-                <span class="text-muted">Place sticky footer content here.</span>
+                <span class="text-muted">&copy; {{ config('app.name') }}</span>
             </div>
         </footer>
         <!-- Bootstrap core JavaScript -->

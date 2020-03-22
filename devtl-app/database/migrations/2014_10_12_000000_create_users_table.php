@@ -15,16 +15,26 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('name', 100);
-            $table->string('company', 150);
-            $table->string('vat_id', 100);
-            $table->string('address', 400);
-            $table->string('state', 100);
-            $table->string('city', 100);
-            $table->string('zip', 20);
-            $table->unsignedInteger('country_id');
+            $table->string('email')
+                ->unique();
+            $table->string('password')
+                ->nullable();
+            $table->string('name', 100)
+                ->nullable();
+            $table->string('company', 150)
+                ->nullable();
+            $table->string('vat_id', 100)
+                ->nullable();
+            $table->string('address', 400)
+                ->nullable();
+            $table->string('state', 100)
+                ->nullable();
+            $table->string('city', 100)
+                ->nullable();
+            $table->string('zip', 20)
+                ->nullable();
+            $table->unsignedInteger('country_id')
+                ->nullable();
             $table->tinyInteger('status')
                 ->default(1);
             $table->timestamp('email_verified_at')

@@ -36,13 +36,16 @@
                         <a class="nav-link disabled" href="#">Pricing</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-primary" href="#">Sign up</a>
+                        <a class="nav-link btn btn-outline-primary" href="{{ route('register') }}">Sign up</a>
                     </li>
                 </ul>
             </nav>
         </div>
 
-        <div class="main-content">
+        <div class="container">
+            <div id="main_alert_div">
+                @include('layouts.alert')
+            </div>
             @yield('content')
         </div>
 

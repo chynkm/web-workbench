@@ -13,16 +13,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 Route::get('/test', function () {
     return view('test');
 });
 
-Auth::routes(['verify' => true]);
+Route::get('verify-email/{token}', ['as' => 'verify.email', 'uses' => 'Auth\VerifyEmailController@verifyEmail']);
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Auth::routes([
+    'verify' => false,
+    'reset' => false,
+]);
+
+Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
+

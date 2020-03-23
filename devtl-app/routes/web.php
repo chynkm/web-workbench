@@ -13,18 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
 Route::get('/test', function () {
     return view('test');
 });
 
 Route::get('verify-email/{token}', ['as' => 'verify.email', 'uses' => 'Auth\VerifyEmailController@verifyEmail']);
 
-Auth::routes([
-    'verify' => false,
-    'reset' => false,
-]);
+Auth::routes(['reset' => false]);
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');

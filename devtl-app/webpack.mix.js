@@ -13,10 +13,7 @@ let LaravelMixFilenameVersioning = require('laravel-mix-filename-versioning');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .styles([
-        'resources/vendor/open-iconic/css/open-iconic-bootstrap.min.css',
-        'resources/css/custom.css'
-    ], 'public/css/all.css')
+    .styles(['resources/css/custom.css'], 'public/css/all.css')
     .version();
 
 if (mix.inProduction()) {

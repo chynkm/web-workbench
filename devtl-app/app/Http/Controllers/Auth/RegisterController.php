@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Mail\UserEmailVerification;
 use App\Models\User;
+use App\Notifications\EmailRegistration;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -66,8 +66,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $user = User::create(['email' => $data['email']]);
-        Mail::to($user)
-            ->send(new UserEmailVerification($user));
+        $user->notify(new EmailRegistration($user));
 
         return $user;
     }

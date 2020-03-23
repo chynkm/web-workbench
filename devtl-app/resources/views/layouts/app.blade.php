@@ -11,6 +11,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="vendor/open-iconic/css/open-iconic-bootstrap.min.css" rel="stylesheet">
         <link href="{{ mix('/css/all.css') }}" rel="stylesheet">
     </head>
     <body>
@@ -23,6 +24,7 @@
                 <ul class="navbar-nav mr-auto">
                 </ul>
                 <ul class="navbar-nav">
+                    @if(Auth::check())
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Features <span class="sr-only">(current)</span></a>
                     </li>
@@ -36,8 +38,19 @@
                         <a class="nav-link disabled" href="#">Pricing</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="javascript: APP.common.signOut()" id="sign_out_btn">@lang('form.sign_out')</a>
+                    </li>
+                    <form id="sign_out_form" action="{{ route('logout') }}" method="POST">
+                        @csrf
+                    </form>
+                    @else
+                    <li class="nav-item mr-4">
+                        <a class="nav-link" href="{{ route('login') }}">Sign In</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link btn btn-outline-primary" href="{{ route('register') }}">Sign up</a>
                     </li>
+                    @endif
                 </ul>
             </nav>
         </div>

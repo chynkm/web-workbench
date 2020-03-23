@@ -2,11 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Mail\UserEmailVerification;
 use App\Models\User;
+use App\Notifications\EmailRegistration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -24,16 +25,18 @@ class RegisterTest extends TestCase
         $user = User::whereEmail($attributes['email'])
             ->first();
 
-        Mail::fake();
-        Mail::to($user)
-            ->send(new UserEmailVerification($user));
+        Notification::fake();
+        $user->notify(new EmailRegistration($user));
 
-        // Assert a mailable was queued
-        Mail::assertQueued(UserEmailVerification::class);
+        // Assert a notification was sent to the given users...
+        Notification::assertSentTo(
+            [$user], EmailRegistration::class
+        );
 
         $this->assertDatabaseHas('users', $attributes);
 
         $this->get(route('login'))
+            ->assertOk()
             ->assertSee(__('form.user_registered_successfully'));
     }
 

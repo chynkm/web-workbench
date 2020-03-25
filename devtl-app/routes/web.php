@@ -18,6 +18,8 @@ Route::get('/test', function () {
 });
 
 Route::get('verify-email/{token}', ['as' => 'verify.email', 'uses' => 'Auth\VerifyEmailController@verifyEmail']);
+Route::get('link-login/{token}', ['as' => 'link.login', 'uses' => 'Auth\LinkLoginController@login']);
+Route::post('link-login', ['as' => 'link.login', 'uses' => 'Auth\LinkLoginController@sendLinkLoginEmail']);
 
 Auth::routes(['reset' => false]);
 

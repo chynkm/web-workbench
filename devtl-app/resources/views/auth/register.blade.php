@@ -8,7 +8,7 @@
             <h1 class="h3 mb-3 font-weight-normal">@lang('form.create_your_account', ['app_name' => config('app.name')])</h1>
             <div class="form-group">
                 <label for="inputEmail">@lang('form.email')</label>
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="@lang('form.email_placeholder')" value="{{ old('email') }}" autofocus>
+                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="@lang('form.email_placeholder')" autofocus>
                 <small id="emailHelp" class="form-text text-muted">@lang('form.register_help_text')</small>
                 @error('email')
                     <span class="invalid-feedback" role="alert">

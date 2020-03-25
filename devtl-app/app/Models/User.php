@@ -41,4 +41,18 @@ class User extends Authenticatable
     {
         return encrypt($this->id.'|'.$this->email);
     }
+
+    public function userTokens()
+    {
+        return $this->hasMany(UserToken::class);
+    }
+
+    public function getMagicLoginToken(UserToken $userToken)
+    {
+        $token = $userToken->getToken();
+        $this->userTokens()
+            ->create(['token' => $token]);
+
+        return encrypt($this->id.'|'.$token);
+    }
 }

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Notifications\EmailRegistration;
+use App\Notifications\RegistrationEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;
@@ -26,11 +26,11 @@ class RegisterTest extends TestCase
             ->first();
 
         Notification::fake();
-        $user->notify(new EmailRegistration($user));
+        $user->notify(new RegistrationEmail($user));
 
         // Assert a notification was sent to the given users...
         Notification::assertSentTo(
-            [$user], EmailRegistration::class
+            [$user], RegistrationEmail::class
         );
 
         $this->assertDatabaseHas('users', $attributes);

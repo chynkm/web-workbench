@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Notifications\EmailRegistration;
+use App\Notifications\RegistrationEmail;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -66,7 +66,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $user = User::create(['email' => $data['email']]);
-        $user->notify(new EmailRegistration($user));
+        $user->notify(new RegistrationEmail($user));
 
         return $user;
     }

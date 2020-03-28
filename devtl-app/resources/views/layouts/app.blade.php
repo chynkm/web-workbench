@@ -6,7 +6,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
-        <title>{{ config('app.name') }}</title>
+        <title>{{ (isset($pageTitle) ? $pageTitle.' - ': null).config('app.name') }}</title>
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- Bootstrap core CSS -->
@@ -59,10 +59,13 @@
             </nav>
         </div>
 
-        <div class="container">
-            <div id="main_alert_div">
-                @include('layouts.alert')
+        <div class="main_toast_div" aria-live="polite" aria-atomic="true">
+            <div id="toast_div">
+                @include('layouts.toast')
             </div>
+        </div>
+
+        <div class="container">
             @yield('content')
         </div>
 

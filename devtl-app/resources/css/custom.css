@@ -59,3 +59,13 @@ body {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
+.main_toast_div {
+  position: relative;
+  right: 15px;
+  z-index: 100;
+}
+#toast_div {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

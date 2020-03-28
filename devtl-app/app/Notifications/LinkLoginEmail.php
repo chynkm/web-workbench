@@ -48,7 +48,10 @@ class LinkLoginEmail extends Notification implements ShouldQueue
                     ->subject(__('form.login_to_app', ['app_name' => config('app.name')]))
                     ->line(__('form.login_press_button', ['app_name' => config('app.name')]))
                     ->action(__('form.sign_in'), $this->url)
-                    ->line('Thank you for using our application!');
+                    ->line(
+                        __('form.logout_instruction').' '.
+                        __('form.thanks_for_using_app', ['app_name' => config('app.name')])
+                    );
     }
 
     /**

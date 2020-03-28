@@ -17,9 +17,8 @@ Route::get('/test', function () {
     return view('test');
 });
 
-Route::get('verify-email/{token}', ['as' => 'verify.email', 'uses' => 'Auth\VerifyEmailController@verifyEmail']);
 Route::get('link-login/{token}', ['as' => 'link.login', 'uses' => 'Auth\LinkLoginController@login']);
-Route::post('link-login', ['as' => 'link.login', 'uses' => 'Auth\LinkLoginController@sendLinkLoginEmail']);
+Route::post('link-login', ['as' => 'link.sendLoginEmail', 'uses' => 'Auth\LinkLoginController@sendLinkLoginEmail']);
 
 Auth::routes(['reset' => false]);
 
@@ -30,3 +29,6 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::fallback(function(){
+    return view('errors.404');
+});

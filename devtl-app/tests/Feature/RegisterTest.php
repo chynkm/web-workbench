@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\UserToken;
 use App\Notifications\RegistrationEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -74,11 +75,11 @@ class RegisterTest extends TestCase
 
         $user = factory('App\Models\User')->create();
 
-        $this->get(route('verify.email', [$user->getEncryptedEmailToken()]))
+        $this->get(route('link.login', [$user->getMagicLoginToken(new UserToken)]))
             ->assertRedirect('home');
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee(__('form.thanks_for_verifying_your_email'));
+            ->assertSee(__('form.logged_in_successfully'));
     }
 }

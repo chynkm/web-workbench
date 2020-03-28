@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use App\Models\UserToken;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -21,7 +22,7 @@ class RegistrationEmail extends Notification implements ShouldQueue
      */
     public function __construct(User $user)
     {
-        $this->url = route('verify.email', [$user->getEncryptedEmailToken()]);
+        $this->url = route('link.login', [$user->getMagicLoginToken(new UserToken)]);
     }
 
     /**

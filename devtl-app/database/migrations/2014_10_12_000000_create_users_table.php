@@ -37,7 +37,7 @@ class CreateUsersTable extends Migration
                 ->nullable();
             $table->tinyInteger('status')
                 ->default(1);
-            $table->timestamp('email_verified_at')
+            $table->string('session_id', 50)
                 ->nullable();
             $table->rememberToken();
             $table->timestamps();

@@ -1,3 +1,4 @@
+@php $pageTitle = __('form.register') @endphp
 @extends('layouts.app')
 
 @section('content')

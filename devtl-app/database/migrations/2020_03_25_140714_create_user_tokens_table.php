@@ -15,8 +15,7 @@ class CreateUserTokensTable extends Migration
     {
         Schema::create('user_tokens', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')
-                ->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->string('token', 20);
             $table->timestamp('logged_in')
                 ->nullable();

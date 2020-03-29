@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+let LaravelMixFilenameVersioning = require('laravel-mix-filename-versioning');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,4 +13,13 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css');
+    .styles(['resources/css/custom.css'], 'public/css/all.css')
+    .version();
+
+if (mix.inProduction()) {
+  mix.webpackConfig({
+    plugins: [
+      new LaravelMixFilenameVersioning
+    ]
+  });
+}

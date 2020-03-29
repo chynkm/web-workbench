@@ -56,9 +56,7 @@ services:
       dockerfile: Dockerfile
     container_name: app
     volumes:
-      - type: bind
-        source: ./devtl-app
-        target: /var/www
+      - ./devtl-app:/var/www
     working_dir: /var/www
     ports:
       - '9091:9000'

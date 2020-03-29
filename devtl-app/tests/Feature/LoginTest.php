@@ -62,8 +62,7 @@ class LoginTest extends TestCase
             ->assertRedirect(route('home'));
 
         $this->get(route('home'))
-            ->assertOk()
-            ->assertSee(__('form.logged_in_successfully'));
+            ->assertOk();
     }
 
 }

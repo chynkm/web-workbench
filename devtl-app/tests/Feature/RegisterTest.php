@@ -35,6 +35,27 @@ class RegisterTest extends TestCase
         );
 
         $this->assertDatabaseHas('users', $attributes);
+        $this->assertDatabaseHas('schemas', [
+            'name' => config('env.first_schema_name'),
+        ]);
+        $this->assertDatabaseHas('schema_user', [
+            'user_id' => $user->id,
+            'owner' => 1,
+        ]);
+        $this->assertDatabaseHas('schema_tables', [
+            'user_id' => $user->id,
+            'name' => config('env.first_table_name'),
+        ]);
+        $this->assertDatabaseHas('schema_table_columns', [
+            'user_id' => $user->id,
+            'name' => config('env.first_column_name'),
+            'type' => config('env.first_column_type'),
+            'primary_key' => config('env.first_column_primary_key'),
+            'auto_increment' => config('env.first_column_auto_increment'),
+            'unsigned' => config('env.first_column_unsigned'),
+            'nullable' => config('env.first_column_nullable'),
+            'order' => config('env.first_column_order'),
+        ]);
 
         $this->get(route('login'))
             ->assertOk()
@@ -76,10 +97,9 @@ class RegisterTest extends TestCase
         $user = factory('App\Models\User')->create();
 
         $this->get(route('link.login', [$user->getMagicLoginToken(new UserToken)]))
-            ->assertRedirect('home');
+            ->assertRedirect(route('home'));
 
         $this->get(route('home'))
-            ->assertOk()
-            ->assertSee(__('form.logged_in_successfully'));
+            ->assertOk();
     }
 }

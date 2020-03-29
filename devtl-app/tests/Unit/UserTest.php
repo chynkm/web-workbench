@@ -11,10 +11,17 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testAUserHasUserTokens()
+    public function testAUserHasManyUserTokens()
     {
         $user = factory(\App\Models\User::class)->create();
 
         $this->assertInstanceOf(Collection::class, $user->userTokens);
+    }
+
+    public function testAUserHasManySchemas()
+    {
+        $user = factory(\App\Models\User::class)->create();
+
+        $this->assertInstanceOf(Collection::class, $user->schemas);
     }
 }

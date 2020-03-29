@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Schema;
 use App\Models\User;
 use App\Notifications\RegistrationEmail;
 use App\Providers\RouteServiceProvider;
@@ -32,7 +33,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = 'login';
 
     /**
      * Create a new controller instance.
@@ -66,7 +67,8 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $user = User::create(['email' => $data['email']]);
-        $user->notify(new RegistrationEmail($user));
+        $user->createRegistrationSchema(new Schema)
+            ->notify(new RegistrationEmail($user));
 
         return $user;
     }
@@ -83,6 +85,8 @@ class RegisterController extends Controller
         $this->validator($request->all())->validate();
 
         event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->logout($user);
 
         if ($response = $this->registered($request, $user)) {
             return $response;

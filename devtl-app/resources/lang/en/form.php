@@ -28,4 +28,5 @@ return [
     'thanks_for_using_app' => 'Thank you for using :app_name!',
     '404' => '404',
     '404_message' => 'Page not found. Please use the menu to navigate the website.',
+    'schemas' => 'Schemas',
 ];

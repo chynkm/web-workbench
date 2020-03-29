@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasMany(UserToken::class);
     }
 
+    public function schemas()
+    {
+        return $this->belongsToMany(Schema::class);
+    }
+
     public function getMagicLoginToken(UserToken $userToken)
     {
         $token = $userToken->getToken();
@@ -67,5 +72,35 @@ class User extends Authenticatable
         $this->remember_token = null;
         $this->session_id = Session::getId();
         $this->save();
+    }
+
+    public function createRegistrationSchema(Schema $schema)
+    {
+        $schema = $schema->create([
+            'name' => config('env.first_schema_name'),
+        ]);
+
+        $this->schemas()
+            ->sync([$schema->id => ['owner' => true]]);
+
+        $schemaTable = $schema->schemaTables()
+            ->create([
+                'user_id' => $this->id,
+                'name' => config('env.first_table_name'),
+            ]);
+
+        $schemaTable->schemaTableColumns()
+            ->create([
+                'user_id' => $this->id,
+                'name' => config('env.first_column_name'),
+                'type' => config('env.first_column_type'),
+                'primary_key' => config('env.first_column_primary_key'),
+                'auto_increment' => config('env.first_column_auto_increment'),
+                'unsigned' => config('env.first_column_unsigned'),
+                'nullable' => config('env.first_column_nullable'),
+                'order' => config('env.first_column_order'),
+            ]);
+
+        return $this;
     }
 }

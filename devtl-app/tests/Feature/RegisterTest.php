@@ -75,7 +75,7 @@ class RegisterTest extends TestCase
 
         $user = factory('App\Models\User')->create();
 
-        $this->get(route('link.login', [$user->getMagicLoginToken(new UserToken)]))
+        $this->get(route('link.login', [$user->getLinkLoginToken(new UserToken)]))
             ->assertRedirect('home');
 
         $this->get(route('home'))

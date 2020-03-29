@@ -22,7 +22,7 @@ class LinkLoginEmail extends Notification implements ShouldQueue
      */
     public function __construct(User $user)
     {
-        $this->url = route('link.login', [$user->getMagicLoginToken(new UserToken)]);
+        $this->url = route('link.login', [$user->getLinkLoginToken(new UserToken)]);
     }
 
     /**

@@ -49,7 +49,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Schema::class);
     }
 
-    public function getMagicLoginToken(UserToken $userToken)
+    public function getLinkLoginToken(UserToken $userToken)
     {
         $token = $userToken->getToken();
         $this->userTokens()

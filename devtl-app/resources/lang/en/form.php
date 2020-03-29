@@ -29,4 +29,10 @@ return [
     '404' => '404',
     '404_message' => 'Page not found. Please use the menu to navigate the website.',
     'schemas' => 'Schemas',
+    'create_schema' => 'Create schema',
+    'create_new_schema' => 'Create new schema',
+    'name_your_schema' => 'Name your schema',
+    'schema_name' => 'Schema name',
+    'processing_request' => 'Processing your request',
+    'schema_created_successfully' => 'Schema created successfully',
 ];

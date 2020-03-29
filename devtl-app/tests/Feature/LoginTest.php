@@ -56,7 +56,7 @@ class LoginTest extends TestCase
         $this->get(route('home'))
             ->assertRedirect(route('login'));
 
-        $url = route('link.login', [$user->getMagicLoginToken(new UserToken)]);
+        $url = route('link.login', [$user->getLinkLoginToken(new UserToken)]);
 
         $this->get($url)
             ->assertRedirect(route('home'));

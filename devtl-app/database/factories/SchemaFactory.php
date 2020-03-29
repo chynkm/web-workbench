@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Schema::class, function (Faker $faker) {
     return [
-        'name' => config('env.first_schema_name'),
+        'name' => $faker->word,
     ];
 });
 

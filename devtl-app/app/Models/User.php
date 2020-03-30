@@ -63,8 +63,7 @@ class User extends Authenticatable
                 ->destroy($this->session_id);
         }
 
-        Auth::login($this, true);
-        $this->remember_token = null;
+        Auth::login($this);
         $this->session_id = Session::getId();
         $this->save();
     }

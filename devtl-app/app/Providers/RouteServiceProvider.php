@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
@@ -33,6 +34,21 @@ class RouteServiceProvider extends ServiceProvider
         //
 
         parent::boot();
+
+        Route::bind('schema', function ($value) {
+            $schema = \App\Models\Schema::select('schemas.*')
+                ->join('schema_user', 'schemas.id', 'schema_id')
+                ->where('schemas.id', $value)
+                ->where('user_id', Auth::id())
+                ->first();
+
+            return $schema ?? abort(
+                redirect()->route('schemas.index')->with('alert', [
+                    'class' => 'warning',
+                    'message' => __('form.requested_schema_not_found'),
+                ])
+            );
+        });
     }
 
     /**

@@ -21,7 +21,7 @@ return [
     'invalid_token_error_message' => 'Sorry! The token is invalid. Please request a new one.',
     'login_email_sent' => 'We have emailed you a sign-in link.',
     'user_not_found' => 'Sorry! The specified email was not found.',
-    'logged_in_successfully' => 'You have logged-in successfully',
+    'logged_in_successfully' => 'You have logged-in successfully.',
     'login' => 'Login',
     'register' => 'Register',
     'logout_instruction' => 'Your login will only expire when you click on "Sign out" button.',
@@ -33,6 +33,7 @@ return [
     'create_new_schema' => 'Create new schema',
     'name_your_schema' => 'Name your schema',
     'schema_name' => 'Schema name',
-    'processing_request' => 'Processing your request',
-    'schema_created_successfully' => 'Schema created successfully',
+    'processing_request' => 'Processing your request...',
+    'requested_schema_not_found' => 'Sorry! The requested schema was not found.',
+    'schema_created_successfully' => 'Schema created successfully.',
 ];

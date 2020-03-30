@@ -26,15 +26,18 @@ class SchemaController extends Controller
         Auth::user()->schemas()
             ->syncWithoutDetaching([$schema->id => ['owner' => true]]);
 
-        return redirect(route('schemas.show', ['schema' => $schema->id]))
-            ->with('alert', [
+        $request->session()
+            ->flash('alert', [
                 'class' => 'success',
                 'message' => __('form.schema_created_successfully')
             ]);
+
+        return response()->json(['url' => route('schemas.show', ['schema' => $schema->id])]);
     }
 
-    public function show($schema)
+    public function show(Schema $schema)
     {
-
+        $pageTitle = $schema->name;
+        return view('schemas.show', compact('pageTitle', 'schema'));
     }
 }

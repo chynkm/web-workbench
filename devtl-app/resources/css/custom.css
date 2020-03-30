@@ -66,3 +66,12 @@ body {
   top: 0;
   right: 0;
 }
+.schema_list a:hover {
+  text-decoration: none;
+}
+.schema_list .new_schema_href .new_schema  {
+  border: 2px dashed rgba(0,0,0,.125);
+}
+.schema_list .new_schema_href:hover .new_schema {
+  border: 2px dashed #007bff !important;
+}

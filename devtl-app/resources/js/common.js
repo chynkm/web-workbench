@@ -25,7 +25,8 @@ APP.common = {
 
     createSchema: function() {
         var self = this;
-        $('#create_schema_form').on('hide.bs.modal', function (e) {
+        $('#create_schema_modal').on('hide.bs.modal', function (e) {
+            $('#name').val('');
             self.clearCreateSchemaFormErrors();
         });
 
@@ -37,7 +38,7 @@ APP.common = {
 
             $.post($(this).attr('action'), $(this).serialize())
                 .done(function(data) {
-                    console.log(data);
+                    window.location.href = data.url;
                 })
                 .fail(function(xhr) {
                     $('#create_schema_button').html($('#create_schema_button').data('original-text')).prop('disabled', false);
@@ -56,7 +57,7 @@ APP.common = {
     },
 
     clearCreateSchemaFormErrors: function() {
-        $('#name').val('');
+        $('#name').removeClass('is-invalid');
         $('.invalid-feedback').html('').addClass('d-none');
     },
 };

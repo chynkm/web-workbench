@@ -39,7 +39,8 @@ class SchemaTest extends TestCase
         $this->signIn();
         $attributes = factory('App\Models\Schema')->raw();
 
-        $this->post(route('schemas.store'), $attributes);
+        $this->post(route('schemas.store'), $attributes)
+            ->assertJsonStructure(['url']);
 
         $this->assertDatabaseHas('schemas', ['name' => $attributes['name']]);
     }
@@ -75,4 +76,26 @@ class SchemaTest extends TestCase
         $this->get(route('schemas.index'))
             ->assertSee($schema->name);
     }
+
+    public function testAUserCannotViewOthersSchema()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+
+        $this->get(route('schemas.show', ['schema' => $schema->id]))
+            ->assertRedirect(route('schemas.index'));
+    }
+
+    public function testAUserCanViewHisSchema()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()->schemas()
+            ->sync([$schema->id => ['owner' => true]]);
+
+        $this->get(route('schemas.show', ['schema' => $schema->id]))
+            ->assertOk()
+            ->assertSeeText($schema->name);
+    }
+
 }

@@ -19,8 +19,8 @@
         <link href="{{ mix('css/all.css') }}" rel="stylesheet">
     </head>
     <body>
-        <div class="navbar navbar-expand-md p-3 px-md-4 mb-3 bg-white border-bottom">
-            <a class="navbar-brand" href="#">{{ config('app.name') }}</a>
+        <div class="navbar fixed-top navbar-expand-md p-3 px-md-4 mb-3 bg-white border-bottom">
+            <a class="navbar-brand" href="{{ Auth::check() ? route('home') : route('login') }}">{{ config('app.name') }}</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="oi oi-menu"></span>
             </button>
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <div class="@if(request()->route()->getName() != 'schemas.show') container @endif">
+        <div class="{{ request()->route()->getName() == 'schemas.show' ? null : 'container' }}">
             @yield('content')
         </div>
 
@@ -85,6 +85,7 @@
         <script src="/js/popper.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
         <script src="/js/jquery-ui.min.js"></script>
+        <script src="/js/leader-line.min.js"></script>
         @endif
         <script src="{{ mix('/js/app.js') }}"></script>
     </body>

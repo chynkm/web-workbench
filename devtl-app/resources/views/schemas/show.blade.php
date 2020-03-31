@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>{{ $pageTitle }}</h1>
-<div class="container-outer" style="overflow: scroll; width: 100%;">
-    <div class="parent db-canvas mt-5" style="width: 3000px; overflow-x: hidden;">
-        <div class="child" id="child" style="border: 1px solid black; height: 100%; overflow-y:auto; background-image: url('images/square-grid.svg');">
-            <div id="abc" class="card m-4" style="width: 15rem;">
+<h1 class="ml-4">{{ $pageTitle }}</h1>
+
+<div class="db_canvas">
+    <div class="outer_container" style="height: {{ $schema->height }}px">
+        <div class="db_container" id="child">
+            <div id="abc" class="card m-4">
                 <div class="card-header">
                     <strong>users</strong>
                     <span class="float-sm-right">
@@ -18,7 +19,7 @@
                     </span>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-sm">
+                    <table class="table table-bordered table-sm schema_table">
                         <tbody>
                             <tr>
                                 <td><span class="oi oi-key text-warning" title="PRIMARY KEY" aria-hidden="true"></span></td>

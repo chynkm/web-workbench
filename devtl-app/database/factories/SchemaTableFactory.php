@@ -4,12 +4,11 @@
 
 use App\Models\SchemaTable;
 use Faker\Generator as Faker;
-use Illuminate\Support\Str;
 
 $factory->define(SchemaTable::class, function (Faker $faker) {
     return [
         'user_id' => factory(App\Models\User::class),
         'schema_id' => factory(App\Models\Schema::class),
-        'name' => Str::random(20),
+        'name' => $faker->word,
     ];
 });

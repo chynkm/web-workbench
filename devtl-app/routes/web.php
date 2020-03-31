@@ -19,10 +19,13 @@ Route::post('link-login', ['as' => 'link.sendLoginEmail', 'uses' => 'Auth\LinkLo
 Auth::routes(['reset' => false]);
 
 Route::middleware('auth')->group(function () {
-    Route::get('schemas', 'SchemaController@index')->name('home');
-    Route::get('/', ['as' => 'schemas.index', 'uses' => 'SchemaController@index']);
-    Route::post('schemas/store', ['as' => 'schemas.store', 'uses' => 'SchemaController@store']);
+    Route::get('/', 'SchemaController@index')->name('home');
+    Route::get('schemas', ['as' => 'schemas.index', 'uses' => 'SchemaController@index']);
+    Route::post('schemas', ['as' => 'schemas.store', 'uses' => 'SchemaController@store']);
     Route::get('schemas/{schema}', ['as' => 'schemas.show', 'uses' => 'SchemaController@show']);
+
+    Route::get('schemas/{schema}/tables', ['as' => 'schemaTables.index', 'uses' => 'SchemaTableController@index']);
+    Route::post('schemas/{schema}/tables', ['as' => 'schemaTables.store', 'uses' => 'SchemaTableController@store']);
 });
 
 Route::fallback(function(){

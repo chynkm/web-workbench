@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class SchemaTest extends TestCase
 {
-    use RefreshDatabase;
+    use WithFaker, RefreshDatabase;
 
     public function testGuestCannotViewSchemaList()
     {
@@ -37,12 +37,12 @@ class SchemaTest extends TestCase
     public function testUserCanCreateSchema()
     {
         $this->signIn();
-        $attributes = factory('App\Models\Schema')->raw();
+        $attribute['name'] = $this->faker()->word;
 
-        $this->post(route('schemas.store'), $attributes)
+        $this->post(route('schemas.store'), $attribute)
             ->assertJsonStructure(['url']);
 
-        $this->assertDatabaseHas('schemas', ['name' => $attributes['name']]);
+        $this->assertDatabaseHas('schemas', ['name' => $attribute['name']]);
     }
 
     /**
@@ -70,14 +70,15 @@ class SchemaTest extends TestCase
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
-        Auth::user()->schemas()
-            ->sync([$schema->id => ['owner' => true]]);
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
 
         $this->get(route('schemas.index'))
             ->assertSee($schema->name);
     }
 
-    public function testAUserCannotViewOthersSchema()
+    public function testAUserCannotViewOtherUsersSchema()
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
@@ -90,8 +91,9 @@ class SchemaTest extends TestCase
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
-        Auth::user()->schemas()
-            ->sync([$schema->id => ['owner' => true]]);
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
 
         $this->get(route('schemas.show', ['schema' => $schema->id]))
             ->assertOk()

@@ -9,6 +9,8 @@ html {
   }
 }
 body {
+  margin-top: 80px;
+  padding-bottom: 10px;
   margin-bottom: 60px; /* Margin bottom by footer height */
 }
 .footer {
@@ -74,4 +76,34 @@ body {
 }
 .schema_list .new_schema_href:hover .new_schema {
   border: 2px dashed #007bff !important;
+}
+.db_canvas .outer_container {
+  width: 3000px;
+  overflow-x: hidden;
+}
+.db_canvas .db_container {
+  border: 1px solid rgba(0,0,0,.125);
+  height: 100%;
+  overflow-y: auto;
+  background-image: url('/img/square-grid.svg');
+}
+.db_canvas .card {
+  width: 15rem;
+}
+.db_canvas .card-header {
+  padding: 0.34rem 0.25rem;
+}
+.db_canvas .card-body {
+  padding: 0;
+}
+.db_canvas .table {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+.db_canvas .btn-xs {
+  font-size: 10px;
+  padding: 3px;
+}
+.text_null {
+  color: #B5D6F6;
 }

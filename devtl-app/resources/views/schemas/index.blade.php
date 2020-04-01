@@ -6,7 +6,7 @@
 <div class="row schema_list">
     @forelse ($schemas as $schema)
     <div class="col-md-4 mt-4">
-        <a href="{{ route('schemas.show', ['schema' => $schema->id]) }}">
+        <a href="{{ route('schemaTables.index', ['schema' => $schema->id]) }}">
             <div class="card border-primary text-center">
                 <div class="card-body">
                     <h4 class="card-title">{{ $schema->name }}</h4>

@@ -43,10 +43,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->first();
 
             return $schema ?? abort(
-                redirect()->route('schemas.index')->with('alert', [
-                    'class' => 'warning',
-                    'message' => __('form.requested_schema_not_found'),
-                ])
+                redirect()->route('schemas.index')
+                    ->with('alert', [
+                        'class' => 'warning',
+                        'message' => __('form.requested_schema_not_found'),
+                    ])
             );
         });
     }

@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>{{ $pageTitle }}</h1>
+<h1 class="mb-4">{{ $pageTitle }}</h1>
 
 <div class="row schema_list">
     @forelse ($schemas as $schema)
-    <div class="col-md-4 mt-4">
+    <div class="col-md-4 mb-4">
         <a href="{{ route('schemaTables.index', ['schema' => $schema->id]) }}">
             <div class="card border-primary text-center">
                 <div class="card-body">
@@ -15,7 +15,7 @@
         </a>
     </div>
     @endforeach
-    <div class="col-md-4 mt-4">
+    <div class="col-md-4 mb-4">
         <a href="#" data-toggle="modal" data-target="#create_schema_modal" class="new_schema_href">
             <div class="card text-center new_schema">
                 <div class="card-body">

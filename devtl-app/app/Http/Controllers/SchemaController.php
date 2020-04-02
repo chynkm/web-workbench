@@ -32,7 +32,7 @@ class SchemaController extends Controller
                 'message' => __('form.schema_created_successfully')
             ]);
 
-        return response()->json(['url' => route('schemas.show', ['schema' => $schema->id])]);
+        return response()->json(['url' => route('schemaTables.index', ['schema' => $schema->id])]);
     }
 
     public function show(Schema $schema)

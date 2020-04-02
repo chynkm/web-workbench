@@ -107,3 +107,29 @@ body {
 .text_null {
   color: #B5D6F6;
 }
+#table_column_listing .tables_listing_div {
+  height: 500px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(0,0,0,.125);
+}
+#table_column_listing .table_detail {
+  height: 500px;
+}
+.table_detail .card-body {
+  padding: 0;
+}
+.table_detail .card-title {
+  padding: 1rem;
+  margin-bottom: 0;
+}
+.table_detail .card-title .form-group {
+  margin-bottom: 0;
+}
+.table_detail .card-footer {
+  background-color: transparent;
+  padding: 0.25rem 0.50rem;
+}
+.table_detail .table {
+  margin-bottom: 0;
+  font-size: 14px;
+}

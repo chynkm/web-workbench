@@ -10,7 +10,14 @@ class SchemaTableController extends Controller
     public function index($schema)
     {
         $pageTitle = $schema->name.' '.__('form.tables');
-        return view('schemaTables.index', compact('pageTitle', 'schema'));
+        $schemaTables = $schema->schemaTables
+            ->sortBy('name');
+
+        return view('schemaTables.index', compact(
+            'pageTitle',
+            'schema',
+            'schemaTables',
+        ));
     }
 
     public function store($schema, Request $request)

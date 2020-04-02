@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1 class="ml-4">{{ $pageTitle }}</h1>
+<h1 class="ml-4 mb-4">{{ $pageTitle }}</h1>
 
 <div class="db_canvas">
     <div class="outer_container" style="height: {{ $schema->height }}px">

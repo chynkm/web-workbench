@@ -8,6 +8,7 @@ APP.common = {
     init: function() {
         this.signOut();
         this.showToast();
+        this.showToolTip();
         this.createSchema();
         this.createTable();
     },
@@ -22,6 +23,10 @@ APP.common = {
         if($('#alert_toast').length) {
             $('#alert_toast').toast('show');
         }
+    },
+
+    showToolTip: function() {
+        $('[data-toggle="tooltip"]').tooltip();
     },
 
     createSchema: function() {

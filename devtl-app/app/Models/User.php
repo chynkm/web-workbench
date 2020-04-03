@@ -86,13 +86,16 @@ class User extends Authenticatable
             ->create([
                 'user_id' => $this->id,
                 'name' => config('env.first_table_name'),
+                'engine' => config('env.first_table_engine'),
+                'collation' => config('env.first_table_collation'),
             ]);
 
         $schemaTable->schemaTableColumns()
             ->create([
                 'user_id' => $this->id,
                 'name' => config('env.first_column_name'),
-                'type' => config('env.first_column_type'),
+                'datatype' => config('env.first_column_datatype'),
+                'length' => config('env.first_column_length'),
                 'primary_key' => config('env.first_column_primary_key'),
                 'auto_increment' => config('env.first_column_auto_increment'),
                 'unsigned' => config('env.first_column_unsigned'),

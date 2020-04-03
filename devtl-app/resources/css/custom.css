@@ -131,5 +131,36 @@ body {
 }
 .table_detail .table {
   margin-bottom: 0;
-  font-size: 14px;
+  font-size: 15px;
+}
+.table_detail .table>tbody>tr>td {
+  padding: 0;
+}
+.table_detail .table input {
+  width: 100%;
+  border: 0;
+}
+.table_detail .table input[type="text"] {
+  padding-left: 4px;
+}
+.table_detail .card-title {
+  padding: 0.2rem;
+}
+.table_detail .select_type.form-control {
+  height: inherit;
+}
+.table_detail .table th.th_column_name {
+  width: 31%;
+}
+.table_detail .table th.th_type {
+  width: 14%;
+}
+.table_detail .table th.th_two_letter {
+  width: 5%;
+}
+.table_detail .table th.th_default {
+  width: 8%;
+}
+.table_detail .table th.th_comment {
+  width: 12%
 }

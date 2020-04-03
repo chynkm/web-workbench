@@ -18,17 +18,20 @@ class CreateSchemaTableColumnsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('schema_table_id');
             $table->string('name');
-            $table->string('type', 50);
+            $table->string('datatype', 50);
+            $table->unsignedInteger('length');
             $table->boolean('primary_key')
-                ->default(0);
-            $table->boolean('unique')
-                ->default(0);
-            $table->boolean('auto_increment')
-                ->default(0);
-            $table->boolean('unsigned')
                 ->default(0);
             $table->boolean('nullable')
                 ->default(1);
+            $table->boolean('unsigned')
+                ->default(0);
+            $table->boolean('unique')
+                ->default(0);
+            $table->boolean('zero_fill')
+                ->default(0);
+            $table->boolean('auto_increment')
+                ->default(0);
             $table->string('default_value')
                 ->nullable();
             $table->string('comment')

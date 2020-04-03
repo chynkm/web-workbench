@@ -10,7 +10,8 @@ $factory->define(SchemaTableColumn::class, function (Faker $faker) {
         'user_id' => factory(App\Models\User::class),
         'schema_table_id' => factory(App\Models\SchemaTable::class),
         'name' => $faker->word,
-        'type' => config('env.first_column_type'),
+        'datatype' => config('env.first_column_datatype'),
+        'length' => config('env.first_column_length'),
         'order' => $faker->randomDigit,
     ];
 });

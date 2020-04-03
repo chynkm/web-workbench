@@ -18,6 +18,8 @@ class CreateSchemaTablesTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('schema_id');
             $table->string('name', 100);
+            $table->string('engine', 20);
+            $table->string('collation', 40);
             $table->string('description')
                 ->nullable();
             $table->integer('x_index')

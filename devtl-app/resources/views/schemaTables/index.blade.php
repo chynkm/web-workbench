@@ -27,7 +27,11 @@
                 @for($i = 0; $i < 2; $i++)
                 @forelse ($schemaTables as $schemaTable)
                 <div class="col-md-12 mt-2">
-                    <button type="button" class="btn btn-outline-primary btn-block">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary btn-block"
+                        data-engine="{{ $schemaTable->engine }}"
+                        data-collation="{{ $schemaTable->collation }}">
                         {{ $schemaTable->name }}
                     </button>
                 </div>
@@ -42,215 +46,34 @@
                     <div class="card rounded-0 h-100">
                         <div class="card-body">
                             <div class="card-title">
-                                <div class="form-group">
-                                    <label>@lang('form.table_name')</label>
-                                    <input type="text" class="form-control" name="name" placeholder="@lang('form.enter_table_name')">
+                                <div class="form-inline">
+                                    <input type="text" class="form-control col-md-6 mr-2 table_name" name="schema_table['name']" placeholder="@lang('form.enter_table_name')">
+                                    @include('schemaTables.engine')
+                                    @include('schemaTables.collation')
                                 </div>
                             </div>
-                            <table class="table table-bordered table-sm">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Column name</th>
-                                        <th scope="col">Type</th>
-                                        <th scope="col">Length</th>
-                                        <th scope="col">PK</th>
-                                        <th scope="col">Null</th>
-                                        <th scope="col">UQ</th>
-                                        <th scope="col">UN</th>
-                                        <th scope="col">ZF</th>
-                                        <th scope="col">AI</th>
-                                        <th scope="col">Default</th>
-                                        <th scope="col">Comments</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>id</td>
-                                        <td>bigint</td>
-                                        <td>11</td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['primary_key'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['null'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unique'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unsigned'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['zerofill'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['auto_increment'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td>Null</td>
-                                        <td>comment</td>
-                                    </tr>
-                                    <tr>
-                                        <td>account_id</td>
-                                        <td>bigint</td>
-                                        <td>11</td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['primary_key'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['null'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unique'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unsigned'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['zerofill'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['auto_increment'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td>Null</td>
-                                        <td>comment</td>
-                                    </tr>
-                                    <tr>
-                                        <td>first_name</td>
-                                        <td>varchar</td>
-                                        <td>30</td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['primary_key'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['null'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unique'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unsigned'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['zerofill'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['auto_increment'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td>Null</td>
-                                        <td>comment</td>
-                                    </tr>
-                                    <tr>
-                                        <td>last_name</td>
-                                        <td>varchar</td>
-                                        <td>30</td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['primary_key'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['null'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unique'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unsigned'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['zerofill'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['auto_increment'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td>Null</td>
-                                        <td>comment</td>
-                                    </tr>
-                                    <tr>
-                                        <td>survey_invitation_target_survey_id</td>
-                                        <td>integer</td>
-                                        <td>11</td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['primary_key'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['null'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unique'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['unsigned'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['zerofill'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input position-static" type="checkbox" name="schema_table_columns['auto_increment'][]" value="1" id="defaultCheck1">
-                                            </div>
-                                        </td>
-                                        <td>Null</td>
-                                        <td>comment</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th class="th_column_name">@lang('form.column_name')</th>
+                                            <th class="th_type">@lang('form.type')</th>
+                                            <th class="th_two_letter">@lang('form.length')</th>
+                                            <th class="th_two_letter" title="@lang('form.pk')">PK</th>
+                                            <th class="th_two_letter">@lang('form.null')</th>
+                                            <th class="th_two_letter" title="@lang('form.un')">UN</th>
+                                            <th class="th_two_letter" title="@lang('form.uq')">UQ</th>
+                                            <th class="th_two_letter" title="@lang('form.zf')">ZF</th>
+                                            <th class="th_two_letter" title="@lang('form.ai')">AI</th>
+                                            <th class="th_default">@lang('form.default')</th>
+                                            <th class="th_comment">@lang('form.comment')</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table_detail_tbody">
+                                        @include('schemaTableColumns.exampleRow', ['schemaTableColumn' => null])
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="card-footer text-right">
                             <button
@@ -267,4 +90,10 @@
         </div>
     </div>
 </div>
+
+<table id="column_example_row" class="d-none">
+    <tbody>
+        @include('schemaTableColumns.exampleRow', ['schemaTableColumn' => null])
+    </tbody>
+</table>
 @endsection

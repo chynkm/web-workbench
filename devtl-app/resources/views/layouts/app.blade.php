@@ -74,6 +74,14 @@
                 <span class="text-muted">&copy; {{ config('app.name') }}</span>
             </div>
         </footer>
+
+        <div id="overlay" class="d-none">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">@lang('form.loading')</span>
+                </div>
+            </div>
+        </div>
         <!-- Bootstrap core JavaScript -->
         @if (config('app.env') == 'production')
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>

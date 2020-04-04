@@ -24,19 +24,19 @@
     <div class="row">
         <div class="col-md-3 border tables_listing_div">
             <div class="row">
-                @for($i = 0; $i < 2; $i++)
                 @forelse ($schemaTables as $schemaTable)
                 <div class="col-md-12 mt-2">
                     <button
                         type="button"
-                        class="btn btn-outline-primary btn-block"
+                        class="btn btn-outline-primary btn-block table_button"
+                        data-route="{{ route('schemaTables.columns', ['schemaTable' => $schemaTable->id]) }}"
+                        data-name="{{ $schemaTable->name }}"
                         data-engine="{{ $schemaTable->engine }}"
                         data-collation="{{ $schemaTable->collation }}">
                         {{ $schemaTable->name }}
                     </button>
                 </div>
                 @endforeach
-                @endfor
             </div>
         </div>
         <div class="col-md-9">
@@ -47,7 +47,7 @@
                         <div class="card-body">
                             <div class="card-title">
                                 <div class="form-inline">
-                                    <input type="text" class="form-control col-md-6 mr-2 table_name" name="schema_table['name']" placeholder="@lang('form.enter_table_name')">
+                                    <input type="text" class="form-control col-md-6 mr-2 table_name" id="table_name" name="schema_table['name']" placeholder="@lang('form.enter_table_name')">
                                     @include('schemaTables.engine')
                                     @include('schemaTables.collation')
                                 </div>

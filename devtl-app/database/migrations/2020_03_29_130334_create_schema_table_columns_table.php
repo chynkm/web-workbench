@@ -19,7 +19,7 @@ class CreateSchemaTableColumnsTable extends Migration
             $table->unsignedBigInteger('schema_table_id');
             $table->string('name');
             $table->string('datatype', 50);
-            $table->unsignedInteger('length');
+            $table->string('length');
             $table->boolean('primary_key')
                 ->default(0);
             $table->boolean('nullable')

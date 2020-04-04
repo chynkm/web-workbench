@@ -50,6 +50,23 @@ class RouteServiceProvider extends ServiceProvider
                     ])
             );
         });
+
+        Route::bind('schemaTable', function ($value) {
+            $schemaTable = \App\Models\SchemaTable::select('schema_tables.*')
+                ->join('schemas', 'schemas.id', 'schema_tables.schema_id')
+                ->join('schema_user', 'schemas.id', 'schema_user.schema_id')
+                ->where('schema_tables.id', $value)
+                ->where('schema_user.user_id', Auth::id())
+                ->first();
+
+            return $schemaTable ?? abort(
+                redirect()->route('schemas.index')
+                    ->with('alert', [
+                        'class' => 'warning',
+                        'message' => __('form.requested_table_not_found'),
+                    ])
+            );
+        });
     }
 
     /**

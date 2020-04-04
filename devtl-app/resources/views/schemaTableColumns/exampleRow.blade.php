@@ -1,4 +1,4 @@
-<tr>
+<tr class="table_column_row">
     <td><input type="text" class="column_name" name="schema_table_columns['name'][]" class="length" name="schema_table_columns['length'][]" placeholder="@lang('form.name')" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->name : null }}"></td>
     <td>@include('schemaTableColumns.datatype', compact('schemaTableColumn'))</td>
     <td><input type="text" class="length" name="schema_table_columns['length'][]" placeholder="@lang('form.length')" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->length : null }}"></td>

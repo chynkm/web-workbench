@@ -13,7 +13,7 @@ $dataTypes = [
     @foreach($dataTypes as $typeGroup => $dataTypes)
     <optgroup label="{{ $typeGroup }}">
         @foreach($dataTypes as $type)
-        <option value="{{ $type }}" {{ (isset($schemaTableColumn) && $schemaTableColumn->datatype == $type) || (! isset($schemaTableColumn) && $type == 'tinyint') ? ' selected' : null }}>{{ $type }}</option>
+        <option value="{{ $type }}" {{ isset($schemaTableColumn) && $schemaTableColumn->datatype == $type ? ' selected' : null }}>{{ $type }}</option>
         @endforeach
     </optgroup>
     @endforeach

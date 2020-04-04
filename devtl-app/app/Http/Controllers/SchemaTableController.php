@@ -23,7 +23,9 @@ class SchemaTableController extends Controller
     public function store($schema, Request $request)
     {
         $request->validate([
-            'name' => 'required|min:2|max:100',
+            'name' => 'required|max:100',
+            'engine' => 'required|max:20',
+            'collation' => 'required|max:40',
             'description' => 'max:255',
         ]);
 
@@ -31,9 +33,22 @@ class SchemaTableController extends Controller
             ->create([
                 'user_id' => Auth::id(),
                 'name' => $request->name,
+                'engine' => $request->engine,
+                'collation' => $request->collation,
                 'description' => $request->description,
             ]);
 
         return response()->json(['status' => true]);
+    }
+
+    public function columns($schemaTable)
+    {
+        $schemaTableColumns = $schemaTable->schemaTableColumns
+            ->sortBy('order');
+
+        return response()->json([
+            'status' => true,
+            'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
+        ]);
     }
 }

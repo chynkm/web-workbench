@@ -1,4 +1,4 @@
-<select name="schema_table['engine']" class="form-control mr-2 table_engine">
+<select name="schema_table['engine']" class="form-control mr-2 table_engine" id="table_engine">
     <option value="Aria">Aria</option>
     <option value="InnoDB" selected>InnoDB</option>
     <option value="MEMORY">MEMORY</option>

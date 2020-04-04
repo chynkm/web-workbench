@@ -10,7 +10,6 @@ APP.common = {
         this.showToast();
         this.showToolTip();
         this.createSchema();
-        this.createTable();
     },
 
     signOut: function() {
@@ -65,12 +64,5 @@ APP.common = {
     clearCreateSchemaFormErrors: function() {
         $('#name').removeClass('is-invalid');
         $('.invalid-feedback').html('').addClass('d-none');
-    },
-
-    createTable: function() {
-        $('#create_table_btn').click(function() {
-            $('#table_listing').addClass('d-none');
-            $('#table_column_listing').removeClass('d-none');
-        });
     },
 };

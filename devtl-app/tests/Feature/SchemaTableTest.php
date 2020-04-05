@@ -26,7 +26,17 @@ class SchemaTableTest extends TestCase
 
         $attribute['name'] = $this->faker()->word;
 
-        $this->get(route('schemaTables.store', ['schema' => $schema->id]), $attribute)
+        $this->post(route('schemaTables.store', ['schema' => $schema->id]), $attribute)
+            ->assertRedirect('login');
+    }
+
+    public function testGuestCannotEditSchemaTable()
+    {
+        $schema = factory('App\Models\Schema')->create();
+        $schemaTable = factory('App\Models\SchemaTable')->create();
+        $attribute['name'] = $this->faker()->word;
+
+        $this->post(route('schemaTables.update', ['schemaTable' => $schemaTable->id]), $attribute)
             ->assertRedirect('login');
     }
 
@@ -58,6 +68,32 @@ class SchemaTableTest extends TestCase
         $attributes['collation'] = Str::random(25);
 
         $this->post(route('schemaTables.store', ['schema' => $schema->id]), $attributes)
+            ->assertJsonStructure(['status', 'table_url', 'column_url']);
+
+        $this->assertDatabaseHas('schema_tables', [
+            'name' => $attributes['name'],
+            'engine' => $attributes['engine'],
+            'collation' => $attributes['collation'],
+        ]);
+    }
+
+    public function testUserCanEditSchemaTable()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $schemaTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $attributes['name'] = Str::random(10);
+        $attributes['engine'] = Str::random(15);
+        $attributes['collation'] = Str::random(25);
+
+        $this->post(route('schemaTables.update', ['schemaTable' => $schemaTable->id]), $attributes)
             ->assertJsonStructure(['status']);
 
         $this->assertDatabaseHas('schema_tables', [
@@ -148,32 +184,6 @@ class SchemaTableTest extends TestCase
         $this->get(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]))
             ->assertOk()
             ->assertJsonStructure(['status', 'html']);
-    }
-
-    public function testUserCanCreateSchemaTableColumns()
-    {
-        $this->signIn();
-        $schema = factory('App\Models\Schema')->create();
-        Auth::user()
-            ->schemas()
-            ->sync([$schema->id]);
-        $schemaTable = factory('App\Models\SchemaTable')->create([
-            'schema_id' => $schema->id,
-            'user_id' => Auth::id(),
-        ]);
-        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->raw([
-            'user_id' => Auth::id(),
-            'schema_table_id' => $schemaTable->id,
-        ]);
-
-        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $schemaTableColumn)
-            ->assertJsonStructure(['status']);
-
-        $this->assertDatabaseHas('schema_table_columns', [
-            'name' => $attributes['name'],
-            'engine' => $attributes['engine'],
-            'collation' => $attributes['collation'],
-        ]);
     }
 
 }

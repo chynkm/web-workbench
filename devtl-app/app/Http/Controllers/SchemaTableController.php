@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveSchemaTableRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,16 +21,9 @@ class SchemaTableController extends Controller
         ));
     }
 
-    public function store($schema, Request $request)
+    public function store($schema, SaveSchemaTableRequest $request)
     {
-        $request->validate([
-            'name' => 'required|alpha_dash|max:100',
-            'engine' => 'required|max:20',
-            'collation' => 'required|max:40',
-            'description' => 'max:255',
-        ]);
-
-        $schema->schemaTables()
+        $schemaTable = $schema->schemaTables()
             ->create([
                 'user_id' => Auth::id(),
                 'name' => $request->name,
@@ -37,6 +31,23 @@ class SchemaTableController extends Controller
                 'collation' => $request->collation,
                 'description' => $request->description,
             ]);
+
+        return response()->json([
+            'status' => true,
+            'table_url' => route('schemaTables.update', ['schemaTable' => $schemaTable->id]),
+            'column_url' => route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]),
+        ]);
+    }
+
+    public function update($schemaTable, SaveSchemaTableRequest $request)
+    {
+        $schemaTable->update([
+            'user_id' => Auth::id(),
+            'name' => $request->name,
+            'engine' => $request->engine,
+            'collation' => $request->collation,
+            'description' => $request->description,
+        ]);
 
         return response()->json(['status' => true]);
     }

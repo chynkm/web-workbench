@@ -76,7 +76,7 @@ APP.schemaTable = {
             clickedTable.addClass('btn-primary')
                 .removeClass('btn-outline-primary');
 
-            $.getJSON(clickedTable.data('route'))
+            $.getJSON(clickedTable.data('route_get_columns'))
                 .done(function(data) {
                     if (data.status) {
                         self.tableName.val(clickedTable.data('name'));

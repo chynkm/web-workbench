@@ -3,24 +3,34 @@
 @section('content')
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1>{{ $pageTitle }}</h1>
-    <button type="button" class="btn btn-primary" id="create_table_btn">@lang('form.create_table')</button>
+    <button type="button"
+        class="btn btn-primary"
+        id="create_table_btn"
+        data-route="{{ route('schemaTables.store', ['schema' => $schema->id]) }}"
+        data-engine="{{ config('env.first_table_engine') }}"
+        data-collation="{{ config('env.first_table_collation') }}">
+        @lang('form.create_table')
+    </button>
 </div>
 
-<div id="table_listing" class="d-none">
+<div id="table_listing">
     <div class="row">
-        @for($i = 0; $i < 5; $i++)
         @forelse ($schemaTables as $schemaTable)
         <div class="col-md-3 mt-2">
-            <button type="button" class="btn btn-outline-primary btn-block">
+            <button type="button"
+                class="btn btn-outline-primary btn-block table_button"
+                data-route="{{ route('schemaTables.columns', ['schemaTable' => $schemaTable->id]) }}"
+                data-name="{{ $schemaTable->name }}"
+                data-engine="{{ $schemaTable->engine }}"
+                data-collation="{{ $schemaTable->collation }}">
                 {{ $schemaTable->name }}
             </button>
         </div>
         @endforeach
-        @endfor
     </div>
 </div>
 
-<div id="table_column_listing">
+<div id="table_column_listing" class="d-none">
     <div class="row">
         <div class="col-md-3 border tables_listing_div">
             <div class="row">
@@ -59,12 +69,12 @@
                                             <th class="th_column_name">@lang('form.column_name')</th>
                                             <th class="th_type">@lang('form.type')</th>
                                             <th class="th_two_letter">@lang('form.length')</th>
-                                            <th class="th_two_letter" title="@lang('form.pk')">PK</th>
                                             <th class="th_two_letter">@lang('form.null')</th>
                                             <th class="th_two_letter" title="@lang('form.un')">UN</th>
                                             <th class="th_two_letter" title="@lang('form.uq')">UQ</th>
-                                            <th class="th_two_letter" title="@lang('form.zf')">ZF</th>
                                             <th class="th_two_letter" title="@lang('form.ai')">AI</th>
+                                            <th class="th_two_letter" title="@lang('form.pk')">PK</th>
+                                            <th class="th_two_letter" title="@lang('form.zf')">ZF</th>
                                             <th class="th_default">@lang('form.default')</th>
                                             <th class="th_comment">@lang('form.comment')</th>
                                         </tr>

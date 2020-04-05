@@ -19,7 +19,7 @@ class SchemaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|min:2|max:100',
+            'name' => 'required|alpha_dash|max:100',
         ]);
 
         $schema = Schema::create(['name' => $request->name]);

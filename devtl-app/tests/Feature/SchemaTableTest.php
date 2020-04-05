@@ -88,6 +88,7 @@ class SchemaTableTest extends TestCase
             ['', 'name'],
             [null, 'name'],
             [Str::random(101), 'name'],
+            ['spaced table', 'name'],
             ['', 'engine'],
             [null, 'engine'],
             [Str::random(21), 'engine'],
@@ -148,5 +149,31 @@ class SchemaTableTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(['status', 'html']);
     }
-}
 
+    public function testUserCanCreateSchemaTableColumns()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $schemaTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->raw([
+            'user_id' => Auth::id(),
+            'schema_table_id' => $schemaTable->id,
+        ]);
+
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $schemaTableColumn)
+            ->assertJsonStructure(['status']);
+
+        $this->assertDatabaseHas('schema_table_columns', [
+            'name' => $attributes['name'],
+            'engine' => $attributes['engine'],
+            'collation' => $attributes['collation'],
+        ]);
+    }
+
+}

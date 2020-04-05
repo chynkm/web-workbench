@@ -23,7 +23,7 @@ class SchemaTableController extends Controller
     public function store($schema, Request $request)
     {
         $request->validate([
-            'name' => 'required|max:100',
+            'name' => 'required|alpha_dash|max:100',
             'engine' => 'required|max:20',
             'collation' => 'required|max:40',
             'description' => 'max:255',
@@ -50,5 +50,10 @@ class SchemaTableController extends Controller
             'status' => true,
             'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
         ]);
+    }
+
+    public function updateColumns($schemaTable, Request $request)
+    {
+
     }
 }

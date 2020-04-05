@@ -61,7 +61,7 @@ class SchemaTest extends TestCase
         return [
             [''],
             [null],
-            [Str::random(1)],
+            ['space name'],
             [Str::random(101)],
         ];
     }

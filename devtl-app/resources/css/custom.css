@@ -146,7 +146,7 @@ body {
 .table_detail .card-title {
   padding: 0.2rem;
 }
-.table_detail .select_type.form-control {
+.table_detail .datatype.form-control {
   height: inherit;
 }
 .table_detail .table th.th_column_name {
@@ -163,6 +163,10 @@ body {
 }
 .table_detail .table th.th_comment {
   width: 12%
+}
+.table_detail .table input[type="text"].error_highlight,
+.table_detail .table td.error_highlight {
+  background-image: linear-gradient(225deg, #dc3545, #dc3545 8px, transparent 8px, transparent);
 }
 #overlay {
   position: fixed;

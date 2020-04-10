@@ -59,4 +59,5 @@ return [
     'zf' => 'Zero fill',
     'ai' => 'Auto increment',
     'default' => 'Default',
+    'in_row' => 'in row',
 ];

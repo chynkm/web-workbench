@@ -31,4 +31,14 @@ class SaveSchemaTableRequest extends FormRequest
             'description' => 'max:255',
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'name' => __('form.name'),
+            'engine' => __('form.engine'),
+            'collation' => __('form.collation'),
+            'description' => __('form.description'),
+        ];
+    }
 }

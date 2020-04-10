@@ -9,7 +9,7 @@ $dataTypes = [
 ];
 ?>
 
-<select name="schema_table_columns['datatype'][]" class="form-control select_type" aria-labelledby="label-type">
+<select name="schema_table_columns[datatype][]" class="form-control datatype" aria-labelledby="label-type">
     @foreach($dataTypes as $typeGroup => $dataTypes)
     <optgroup label="{{ $typeGroup }}">
         @foreach($dataTypes as $type)

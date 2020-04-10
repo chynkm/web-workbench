@@ -13,6 +13,9 @@
     </button>
 </div>
 
+<div id="table_error_display_div">
+</div>
+
 <div id="table_listing">
     <div class="row">
         @forelse ($schemaTables as $schemaTable)
@@ -67,38 +70,34 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm">
-                                <thead>
-                                    <tr>
-                                        <th class="th_column_name">@lang('form.column_name')</th>
-                                        <th class="th_type">@lang('form.type')</th>
-                                        <th class="th_two_letter">@lang('form.length')</th>
-                                        <th class="th_two_letter">@lang('form.null')</th>
-                                        <th class="th_two_letter" title="@lang('form.un')">UN</th>
-                                        <th class="th_two_letter" title="@lang('form.uq')">UQ</th>
-                                        <th class="th_two_letter" title="@lang('form.ai')">AI</th>
-                                        <th class="th_two_letter" title="@lang('form.pk')">PK</th>
-                                        <th class="th_two_letter" title="@lang('form.zf')">ZF</th>
-                                        <th class="th_default">@lang('form.default')</th>
-                                        <th class="th_comment">@lang('form.comment')</th>
-                                    </tr>
-                                </thead>
-                                <form id="create_schema_table_column_form" class="w-100">
-                                    @csrf
+                        <form id="create_schema_table_column_form" class="w-100">
+                            @csrf
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th class="th_column_name">@lang('form.column_name')</th>
+                                            <th class="th_type">@lang('form.type')</th>
+                                            <th class="th_two_letter">@lang('form.length')</th>
+                                            <th class="th_two_letter">@lang('form.null')</th>
+                                            <th class="th_two_letter" title="@lang('form.un')">UN</th>
+                                            <th class="th_two_letter" title="@lang('form.uq')">UQ</th>
+                                            <th class="th_two_letter" title="@lang('form.ai')">AI</th>
+                                            <th class="th_two_letter" title="@lang('form.pk')">PK</th>
+                                            <th class="th_two_letter" title="@lang('form.zf')">ZF</th>
+                                            <th class="th_default">@lang('form.default')</th>
+                                            <th class="th_comment">@lang('form.comment')</th>
+                                        </tr>
+                                    </thead>
                                     <tbody id="table_detail_tbody">
                                         @include('schemaTableColumns.exampleRow', ['schemaTableColumn' => null])
                                     </tbody>
-                                </form>
-                            </table>
-                        </div>
+                                </table>
+                            </div>
+                        </form>
                     </div>
                     <div class="card-footer text-right">
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            id="create_schema_table_button"
-                            data-loading-text="<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span> @lang('form.saving')">
+                        <button type="button" class="btn btn-primary" id="create_schema_table_button">
                             @lang('form.save')
                         </button>
                     </div>

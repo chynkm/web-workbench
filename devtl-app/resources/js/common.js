@@ -48,14 +48,12 @@ APP.common = {
                 .fail(function(xhr) {
                     $('#create_schema_button').html($('#create_schema_button').data('original-text')).prop('disabled', false);
                     var data = xhr.responseJSON;
-                    if (data.errors) {
-                        for (var i in data.errors) {
-                            $('#'+i).addClass('is-invalid')
-                                .parent()
-                                .find('.invalid-feedback')
-                                .html(data.errors[i])
-                                .removeClass('d-none');
-                        };
+                    for (var i in data.errors) {
+                        $('#'+i).addClass('is-invalid')
+                            .parent()
+                            .find('.invalid-feedback')
+                            .html(data.errors[i])
+                            .removeClass('d-none');
                     };
                 });
         });

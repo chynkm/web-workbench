@@ -1,3 +1,44 @@
+(function ($) {
+    $.fn.serialize = function (options) {
+        return $.param(this.serializeArray(options));
+    };
+
+    $.fn.serializeArray = function (options) {
+        var o = $.extend({
+            checkboxesAsBools: false
+        }, options || {});
+
+        var rselectTextarea = /select|textarea/i;
+        var rinput = /text|hidden|password|search|number/i;
+
+        return this.map(function () {
+            return this.elements ? $.makeArray(this.elements) : this;
+        })
+        .filter(function () {
+            return this.name && !this.disabled &&
+                (this.checked
+                || (o.checkboxesAsBools && this.type === 'checkbox')
+                || rselectTextarea.test(this.nodeName)
+                || rinput.test(this.type));
+            })
+            .map(function (i, elem) {
+                var val = $(this).val();
+                return val == null ?
+                null :
+                $.isArray(val) ?
+                $.map(val, function (val, i) {
+                    return { name: elem.name, value: val };
+                }) :
+                {
+                    name: elem.name,
+                    value: (o.checkboxesAsBools && this.type === 'checkbox') ?
+                        (this.checked ? 1 : 0) :
+                        val
+                };
+            }).get();
+    };
+})(jQuery);
+
 $(function() {
     APP.schemaTable.init();
 });
@@ -12,10 +53,14 @@ APP.schemaTable = {
     tableEngine: $('#table_engine'),
     tableCollation: $('#table_collation'),
     autoIncrementTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'],
+    inputFields: ['name', 'length', 'comment', 'default_value',],
     overlay: $('#overlay'),
+    columnForm: $('#create_schema_table_column_form'),
+    tableErrorDiv: $('#table_error_display_div'),
     init: function() {
         this.addNewRow();
         this.createTable();
+        this.saveTableAndColumns();
         this.clickTableInHorizontalListing();
         this.changeTableAndColumns();
         this.autoIncrementEvent();
@@ -82,6 +127,7 @@ APP.schemaTable = {
                         self.tableName.val(clickedTable.data('name'));
                         self.tableEngine.val(clickedTable.data('engine'));
                         self.tableCollation.val(clickedTable.data('collation'));
+                        self.columnForm.attr('action', clickedTable.data('route_save_columns'))
                         self.tableDetailBody
                             .empty()
                             .append(data.html)
@@ -102,6 +148,45 @@ APP.schemaTable = {
     saveTableAndColumns: function() {
         var self = this;
 
+        $('#create_schema_table_button').click(function() {
+            self.overlay.removeClass('d-none');
+            self.tableErrorDiv.empty();
+            self.columnForm
+                .find('.error_highlight')
+                .removeClass('error_highlight');
+            var disabled = self.columnForm.find(':input:disabled').removeAttr('disabled');
+            var postData = self.columnForm.serialize({ checkboxesAsBools: true });
+            disabled.attr('disabled','disabled');
+
+            $.post(self.columnForm.attr('action'), postData)
+                .done(function(data) {
+                    if (data.status) {
+                        self.tableDetailBody
+                            .empty()
+                            .append(data.html)
+                            .append(self.exampleRow);
+
+                        self.autoIncrementOnLoad();
+                        self.zeroFillOnLoad();
+                        self.primaryKeyOnLoad();
+                    }
+                })
+                .fail(function(xhr) {
+                    var data = xhr.responseJSON;
+                    for (var field in data.errors) {
+                        field = field.split('.');
+                        if ($.inArray(field[0], self.inputFields) == -1 ) {
+                            $('.'+field[0]+':eq('+field[1]+')').closest('td')
+                                .addClass('error_highlight');
+                        } else {
+                            $('.'+field[0]+':eq('+field[1]+')').addClass('error_highlight');
+                        }
+                    }
+                    self.tableErrorDiv.html(data.html);
+                }).always(function() {
+                    self.overlay.addClass('d-none');
+                });
+        });
     },
 
     autoIncrementEvent: function() {
@@ -113,7 +198,7 @@ APP.schemaTable = {
 
         $('#table_detail_tbody').on('click', '.auto_increment_column', function() {
             var row = $(this).closest('.table_column_row');
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             // remove all existing checks
             $('.auto_increment_column').not(this).prop('checked', false);
@@ -134,9 +219,9 @@ APP.schemaTable = {
             }
         });
 
-        $('#table_detail_tbody').on('change', '.select_type', function() {
+        $('#table_detail_tbody').on('change', '.datatype', function() {
             var row = $(this).closest('.table_column_row');
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
                 // if not an INT type
@@ -158,7 +243,7 @@ APP.schemaTable = {
 
         $('#table_detail_tbody').find('.table_column_row').each(function() {
             var row = $(this);
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
                 // if not an INT type
@@ -185,7 +270,7 @@ APP.schemaTable = {
 
         $('#table_detail_tbody').on('click', '.zero_fill_column', function() {
             var row = $(this).closest('.table_column_row');
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             if (
                 $(this).is(':checked')
@@ -201,9 +286,9 @@ APP.schemaTable = {
             }
         });
 
-        $('#table_detail_tbody').on('change', '.select_type', function() {
+        $('#table_detail_tbody').on('change', '.datatype', function() {
             var row = $(this).closest('.table_column_row');
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
                 row.find('.unsigned_column, .zero_fill_column')
@@ -222,7 +307,7 @@ APP.schemaTable = {
 
         $('#table_detail_tbody').find('.table_column_row').each(function() {
             var row = $(this);
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
                 row.find('.unsigned_column, .zero_fill_column')
@@ -246,7 +331,7 @@ APP.schemaTable = {
 
         $('#table_detail_tbody').on('click', '.primary_key_column', function() {
             var row = $(this).closest('.table_column_row');
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             // remove all existing PK checks
             $('.primary_key_column').not(this).prop('checked', false);
@@ -254,7 +339,7 @@ APP.schemaTable = {
 
             if (
                 $(this).is(':checked')
-                && $.inArray(selectedType, self.autoIncrementTypes) != -1
+                && $.inArray(selectedType, self.autoIncrementTypes) == -1
             ) {
                 row.find('.unique_column, .null_column')
                     .prop('checked', false)
@@ -267,11 +352,14 @@ APP.schemaTable = {
                 .prop('disabled', true);
         });
 
-        $('#table_detail_tbody').on('change', '.select_type', function() {
+        $('#table_detail_tbody').on('change', '.datatype', function() {
             var row = $(this).closest('.table_column_row');
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
-            if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
+            if(
+                row.find('.primary_key_column').is(':checked')
+                && $.inArray(selectedType, self.autoIncrementTypes) == -1
+            ) {
                 row.find('.unique_column, .null_column, .primary_key_column')
                     .prop('checked', false)
                     .prop('disabled', true);
@@ -287,7 +375,7 @@ APP.schemaTable = {
 
         $('#table_detail_tbody').find('.table_column_row').each(function() {
             var row = $(this);
-            var selectedType = row.find('.select_type option:selected').val();
+            var selectedType = row.find('.datatype option:selected').val();
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
                 row.find('.unique_column, .null_column, .primary_key_column')

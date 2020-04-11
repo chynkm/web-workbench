@@ -19,16 +19,17 @@
 <div id="table_listing">
     <div class="row">
         @forelse ($schemaTables as $schemaTable)
-        <div class="col-md-3 mt-2">
+        <div class="col-md-4 mt-2">
             <button type="button"
                 class="btn btn-outline-primary btn-block table_button"
+                title="{{ $schemaTable->name }}"
                 data-route_get_columns="{{ route('schemaTables.columns', ['schemaTable' => $schemaTable->id]) }}"
                 data-route_save_table="{{ route('schemaTables.update', ['schemaTable' => $schemaTable->id]) }}"
                 data-route_save_columns="{{ route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]) }}"
                 data-name="{{ $schemaTable->name }}"
                 data-engine="{{ $schemaTable->engine }}"
                 data-collation="{{ $schemaTable->collation }}">
-                {{ $schemaTable->name }}
+                {{ substr($schemaTable->name, 0, 40) }}
             </button>
         </div>
         @endforeach
@@ -37,45 +38,30 @@
 
 <div id="table_column_listing" class="d-none">
     <div class="row">
-        <div class="col-md-3 border tables_listing_div">
-            <div class="row">
-                @forelse ($schemaTables as $schemaTable)
-                <div class="col-md-12 mt-2">
-                    <button
-                        type="button"
-                        class="btn btn-outline-primary btn-block table_button"
-                        data-route_get_columns="{{ route('schemaTables.columns', ['schemaTable' => $schemaTable->id]) }}"
-                        data-route_save_table="{{ route('schemaTables.update', ['schemaTable' => $schemaTable->id]) }}"
-                        data-route_save_columns="{{ route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]) }}"
-                        data-name="{{ $schemaTable->name }}"
-                        data-engine="{{ $schemaTable->engine }}"
-                        data-collation="{{ $schemaTable->collation }}">
-                        {{ $schemaTable->name }}
-                    </button>
-                </div>
-                @endforeach
-            </div>
+        <div class="col-md-3 border sidebar_tables_listing">
+            @include('schemaTables.sideBarColumn', compact('schemaTables'))
         </div>
         <div class="col-md-9">
             <div class="row table_detail">
                 <div class="card rounded-0 h-100">
                     <div class="card-body">
                         <div class="card-title">
-                            <form id="create_schema_table_form" class="w-100">
+                            <form id="create_schema_table_form" class="w-100" onsubmit="return false;">
                                 @csrf
                                 <div class="form-inline">
-                                    <input type="text" class="form-control col-md-6 mr-2 table_name" id="table_name" name="schema_table['name']" placeholder="@lang('form.enter_table_name')">
+                                    <input type="text" class="form-control col-md-6 mr-2 table_name" id="table_name" name="name" placeholder="@lang('form.enter_table_name')">
                                     @include('schemaTables.engine')
                                     @include('schemaTables.collation')
                                 </div>
                             </form>
                         </div>
-                        <form id="create_schema_table_column_form" class="w-100">
+                        <form id="create_schema_table_column_form" class="w-100" onsubmit="return false;">
                             @csrf
                             <div class="table-responsive">
                                 <table class="table table-bordered table-sm">
                                     <thead>
                                         <tr>
+                                            <th class="th_sort_column"><span class="oi oi-sort-ascending"></span></th>
                                             <th class="th_column_name">@lang('form.column_name')</th>
                                             <th class="th_type">@lang('form.type')</th>
                                             <th class="th_two_letter">@lang('form.length')</th>
@@ -87,6 +73,7 @@
                                             <th class="th_two_letter" title="@lang('form.zf')">ZF</th>
                                             <th class="th_default">@lang('form.default')</th>
                                             <th class="th_comment">@lang('form.comment')</th>
+                                            <th class="th_sort_column" title="@lang('form.delete')"><span class="oi oi-trash"></span></th>
                                         </tr>
                                     </thead>
                                     <tbody id="table_detail_tbody">
@@ -102,6 +89,20 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete_confirm_modal" tabindex="-1" role="dialog" aria-labelledby="createSchemaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="text-center"><span class="oi oi-warning text-danger warning_sign"></span> @lang('form.delete_item')</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('form.cancel')</button>
+                <button type="button" class="btn btn-danger text-white" id="delete_ok">@lang('form.delete')</button>
             </div>
         </div>
     </div>

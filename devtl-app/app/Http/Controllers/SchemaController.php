@@ -11,7 +11,8 @@ class SchemaController extends Controller
     public function index()
     {
         $pageTitle = __('form.schemas');
-        $schemas = Auth::user()->schemas;
+        $schemas = Auth::user()->schemas
+            ->sortBy('name');
 
         return view('schemas.index', compact('pageTitle', 'schemas'));
     }

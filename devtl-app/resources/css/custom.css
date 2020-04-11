@@ -35,7 +35,6 @@ body {
 }
 .row.signin {
   align-items: center;
-  padding-top: 40px;
   padding-bottom: 40px;
 }
 .form-signin {
@@ -107,7 +106,7 @@ body {
 .text_null {
   color: #B5D6F6;
 }
-#table_column_listing .tables_listing_div {
+#table_column_listing .sidebar_tables_listing {
   height: 500px;
   overflow-y: auto;
   border-right: 1px solid rgba(0,0,0,.125);
@@ -150,10 +149,10 @@ body {
   height: inherit;
 }
 .table_detail .table th.th_column_name {
-  width: 31%;
+  width: 29%;
 }
 .table_detail .table th.th_type {
-  width: 14%;
+  width: 12%;
 }
 .table_detail .table th.th_two_letter {
   width: 5%;
@@ -167,6 +166,13 @@ body {
 .table_detail .table input[type="text"].error_highlight,
 .table_detail .table td.error_highlight {
   background-image: linear-gradient(225deg, #dc3545, #dc3545 8px, transparent 8px, transparent);
+}
+.table_detail .table th.th_sort_column {
+  width: 2%;
+}
+.table_detail .table .btn-sm {
+  padding: .25rem .5rem;
+  font-size: .5rem;
 }
 #overlay {
   position: fixed;
@@ -185,4 +191,7 @@ body {
   width: 5rem;
   height: 5rem;
   margin-top: 200px;
+}
+.warning_sign {
+  font-size: 40px;
 }

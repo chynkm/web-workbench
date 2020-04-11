@@ -68,7 +68,7 @@ class SchemaTableTest extends TestCase
         $attributes['collation'] = Str::random(25);
 
         $this->post(route('schemaTables.store', ['schema' => $schema->id]), $attributes)
-            ->assertJsonStructure(['status', 'table_url', 'column_url']);
+            ->assertJsonStructure(['status', 'sidebarHtml', 'table_url', 'column_url']);
 
         $this->assertDatabaseHas('schema_tables', [
             'name' => $attributes['name'],
@@ -94,7 +94,7 @@ class SchemaTableTest extends TestCase
         $attributes['collation'] = Str::random(25);
 
         $this->post(route('schemaTables.update', ['schemaTable' => $schemaTable->id]), $attributes)
-            ->assertJsonStructure(['status']);
+            ->assertJsonStructure(['status', 'sidebarHtml']);
 
         $this->assertDatabaseHas('schema_tables', [
             'name' => $attributes['name'],
@@ -104,27 +104,32 @@ class SchemaTableTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidSchemaTableProvider
+     * @dataProvider invalidSaveSchemaTableProvider
      */
-    public function testInvalidSchemaTables($input, $field)
+    public function testInvalidSaveSchemaTables($input, $field)
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
         Auth::user()
             ->schemas()
             ->sync([$schema->id]);
+        $schemaTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'name' => 'users',
+        ]);
 
         $this->post(route('schemaTables.store', ['schema' => $schema->id]), ['name' => $input])
             ->assertSessionHasErrors($field);
     }
 
-    public function invalidSchemaTableProvider()
+    public function invalidSaveSchemaTableProvider()
     {
         return [
             ['', 'name'],
             [null, 'name'],
             [Str::random(101), 'name'],
             ['spaced table', 'name'],
+            ['users', 'name'],
             ['', 'engine'],
             [null, 'engine'],
             [Str::random(21), 'engine'],
@@ -132,6 +137,27 @@ class SchemaTableTest extends TestCase
             [null, 'collation'],
             [Str::random(41), 'collation'],
         ];
+    }
+
+    public function testInvalidUpdateSchemaTables()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $schemaTables = factory('App\Models\SchemaTable', 2)->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $attributes['name'] = $schemaTables->first()->name;
+        $attributes['engine'] = $schemaTables->first()->engine;
+        $attributes['collation'] = $schemaTables->first()->engine;
+
+
+        $this->post(route('schemaTables.update', ['schemaTable' => $schemaTables->last()->id]), $attributes)
+            ->assertSessionHasErrors('name');
     }
 
     public function testAUserCannotViewOtherUsersSchemaTable()
@@ -173,6 +199,14 @@ class SchemaTableTest extends TestCase
         $attribute['name'] = Str::random(10);
 
         $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $attribute)
+            ->assertRedirect('login');
+    }
+
+    public function testGuestCannotDeleteSchemaTableColumns()
+    {
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
+
+        $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
             ->assertRedirect('login');
     }
 
@@ -319,55 +353,68 @@ class SchemaTableTest extends TestCase
             'id' => [
                 $schemaTableColumns->first()->id,
                 $schemaTableColumns->last()->id,
+                null,
                 null, // last row is removed
             ],
             'name' => [
                 'user_id',
+                $schemaTableColumns->last()->name,
                 'account_id',
             ],
             'datatype' => [
                 'bigint',
                 'text',
+                'bigint',
             ],
             'length' => [
                 10,
                 10,
+                20,
             ],
             'unsigned' => [
                 'true',
                 'false',
+                'true',
             ],
             'auto_increment' => [
                 'true',
+                'false',
                 'false',
             ],
             'primary_key' => [
                 'true',
                 'false',
+                'false',
             ],
             'unique' => [
+                'false',
                 'false',
                 'false',
             ],
             'zero_fill' => [
                 'false',
                 'false',
+                'false',
             ],
             'nullable' => [
+                'false',
                 'false',
                 'false',
             ],
             'comment' => [
                 'yay',
                 null,
+                null,
             ],
             'default_value' => [
                 null,
                 '1000',
+                null,
             ],
             'order' => [
                 3,
                 1,
+                4,
             ],
         ];
 
@@ -382,17 +429,23 @@ class SchemaTableTest extends TestCase
             'order' => 3
         ]);
         $this->assertDatabaseHas('schema_table_columns', [
-            'name' => 'account_id',
+            'name' => $schemaTableColumns->last()->name,
             'datatype' => 'text',
             'length' => 10,
             'order' => 1
         ]);
+        $this->assertDatabaseHas('schema_table_columns', [
+            'name' => 'account_id',
+            'datatype' => 'bigint',
+            'length' => 20,
+            'order' => 4
+        ]);
     }
 
     /**
-     * @dataProvider invalidSchemaTableColumnProvider
+     * @dataProvider invalidSaveSchemaTableColumnProvider
      */
-    public function testInvalidSchemaTableColumn($input, $field)
+    public function testInvalidSaveSchemaTableColumn($input, $field)
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
@@ -404,6 +457,11 @@ class SchemaTableTest extends TestCase
             'user_id' => Auth::id(),
         ]);
 
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $schemaTable->id,
+            'name' => 'id',
+        ]);
+
         $attributes['schema_table_columns']['id'] = ['null', 'null'];
         $attributes['schema_table_columns'][$field] = [$input];
 
@@ -411,13 +469,14 @@ class SchemaTableTest extends TestCase
             ->assertSessionHasErrors($field.'.*');
     }
 
-    public function invalidSchemaTableColumnProvider()
+    public function invalidSaveSchemaTableColumnProvider()
     {
         return [
             ['', 'name'],
             [null, 'name'],
             [Str::random(256), 'name'],
             ['spaced column', 'name'],
+            ['id', 'name'],
             ['', 'datatype'],
             [null, 'datatype'],
             [Str::random(51), 'datatype'],
@@ -428,6 +487,79 @@ class SchemaTableTest extends TestCase
             [Str::random(256), 'default_value'],
             [Str::random(256), 'comment'],
         ];
+    }
+
+    public function testAUserCannotUpdateOtherUsersSchemaTableColumn()
+    {
+        $this->signIn();
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
+
+        $attributes['schema_table_columns']['id'] = [
+            $schemaTableColumn->id,
+            'null'
+        ];
+        $attributes['schema_table_columns']['name'] = [$schemaTableColumn->first()->name];
+
+        $this->post(route('schemaTables.columns', ['schemaTable' => $schemaTableColumn->schemaTable->id]), $attributes)
+            ->assertRedirect(route('schemas.index'));
+    }
+
+    public function testInvalidUpdateSchemaTableColumn()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $schemaTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $schemaTableColumns = factory('App\Models\SchemaTableColumn', 2)->create([
+            'schema_table_id' => $schemaTable->id,
+        ]);
+
+        $attributes['schema_table_columns']['id'] = [
+            $schemaTableColumns->first()->id,
+            $schemaTableColumns->last()->id,
+            'null'
+        ];
+        $attributes['schema_table_columns']['name'] = [
+            $schemaTableColumns->first()->name,
+            $schemaTableColumns->first()->name, //using first table name for second table
+        ];
+
+        $this->post(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]), $attributes)
+            ->assertSessionHasErrors('name.*');
+    }
+
+    public function testUserCannotDeleteOthersSchemaTableColumn()
+    {
+        $this->signIn();
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
+
+        $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
+            ->assertRedirect(route('schemas.index'));
+    }
+
+    public function testUserDeleteSchemaTableColumn()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $schemaTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+        ]);
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $schemaTable->id,
+        ]);
+
+        $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
+            ->assertOk()
+            ->assertJsonStructure(['status']);
     }
 
 }

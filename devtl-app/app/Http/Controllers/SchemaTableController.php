@@ -36,6 +36,7 @@ class SchemaTableController extends Controller
 
         return response()->json([
             'status' => true,
+            'sidebarHtml' => $this->sideBarView($schema),
             'table_url' => route('schemaTables.update', ['schemaTable' => $schemaTable->id]),
             'column_url' => route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]),
         ]);
@@ -51,7 +52,16 @@ class SchemaTableController extends Controller
             'description' => $request->description,
         ]);
 
-        return response()->json(['status' => true]);
+        return response()->json([
+            'status' => true,
+            'sidebarHtml' => $this->sideBarView($schemaTable->schema),
+        ]);
+    }
+
+    protected function sideBarView($schema)
+    {
+        $schemaTables = $schema->schemaTables->sortBy('name');
+        return view('schemaTables.sideBarColumn', compact('schemaTables'))->render();
     }
 
     public function columns($schemaTable)
@@ -93,7 +103,7 @@ class SchemaTableController extends Controller
             if ($existingSchemaTableColumn) {
                 $existingSchemaTableColumn->update($data);
             } else {
-                $data['order'] = $schemaTable->schemaTableColumns()->count() + 1;
+                $data['order'] = isset($data['order']) ? $data['order'] : $schemaTable->schemaTableColumns()->count() + 1;
                 $schemaTable->schemaTableColumns()
                     ->create($data);
             }
@@ -102,8 +112,14 @@ class SchemaTableController extends Controller
         $schemaTableColumns = $schemaTable->schemaTableColumns
             ->sortBy('order');
 
+        $alert = [
+            'class' => 'success',
+            'message' => __('form.table_changes_saved_successfully')
+        ];
+
         return response()->json([
             'status' => true,
+            'toast' => view('layouts.toast', compact('alert'))->render(),
             'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
         ]);
     }

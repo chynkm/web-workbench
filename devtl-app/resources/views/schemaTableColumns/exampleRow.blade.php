@@ -1,6 +1,7 @@
 <tr class="table_column_row">
     <input type="hidden" name="schema_table_columns[id][]" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->id : null }}">
-    <input type="hidden" name="schema_table_columns[order][]" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->order : null }}">
+    <input type="hidden" name="schema_table_columns[order][]" class="order" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->order : null }}">
+    <td><button type="button" class="btn btn-primary btn-sm sort_column_button"><span class="oi oi-resize-height"></span></button></td>
     <td><input type="text" class="name" name="schema_table_columns[name][]" class="length" placeholder="@lang('form.name')" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->name : null }}"></td>
     <td>@include('schemaTableColumns.datatype', compact('schemaTableColumn'))</td>
     <td><input type="text" class="length" name="schema_table_columns[length][]" placeholder="@lang('form.length')" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->length : null }}"></td>
@@ -36,4 +37,13 @@
     </td>
     <td><input type="text" class="default_value" name="schema_table_columns[default_value][]" placeholder="@lang('form.default_value')" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->default_value : null }}"></td>
     <td><input type="text" class="comment" name="schema_table_columns[comment][]" placeholder="@lang('form.comment')" value="{{ isset($schemaTableColumn) ? $schemaTableColumn->comment : null }}"></td>
+    <td>
+        <button type="button"
+            class="btn btn-danger btn-sm delete_column_button"
+            data-href="{{ isset($schemaTableColumn) ? route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]) : null }}"
+            data-toggle="modal"
+            data-target="#delete_confirm_modal">
+                <span class="oi oi-x"></span>
+        </button>
+    </td>
 </tr>

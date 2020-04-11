@@ -51,6 +51,10 @@ class SchemaTest extends TestCase
     public function testInvalidSchemaNames($input)
     {
         $this->signIn();
+        /*$schema = factory('App\Models\Schema')->create(['name' => 'first_schema']);
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);*/
 
         $this->post(route('schemas.store'), ['name' => $input])
             ->assertSessionHasErrors('name');
@@ -63,6 +67,7 @@ class SchemaTest extends TestCase
             [null],
             ['space name'],
             [Str::random(101)],
+            // ['first_schema'],
         ];
     }
 

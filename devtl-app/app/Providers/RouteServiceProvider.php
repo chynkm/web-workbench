@@ -53,13 +53,29 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('schemaTable', function ($value) {
             $schemaTable = \App\Models\SchemaTable::select('schema_tables.*')
-                ->join('schemas', 'schemas.id', 'schema_tables.schema_id')
-                ->join('schema_user', 'schemas.id', 'schema_user.schema_id')
+                ->join('schema_user', 'schema_tables.schema_id', 'schema_user.schema_id')
                 ->where('schema_tables.id', $value)
                 ->where('schema_user.user_id', Auth::id())
                 ->first();
 
             return $schemaTable ?? abort(
+                redirect()->route('schemas.index')
+                    ->with('alert', [
+                        'class' => 'warning',
+                        'message' => __('form.requested_table_not_found'),
+                    ])
+            );
+        });
+
+        Route::bind('schemaTableColumn', function ($value) {
+            $schemaTableColumn = \App\Models\SchemaTableColumn::select('schema_table_columns.*')
+                ->join('schema_tables', 'schema_tables.id', 'schema_table_columns.schema_table_id')
+                ->join('schema_user', 'schema_tables.schema_id', 'schema_user.schema_id')
+                ->where('schema_table_columns.id', $value)
+                ->where('schema_user.user_id', Auth::id())
+                ->first();
+
+            return $schemaTableColumn ?? abort(
                 redirect()->route('schemas.index')
                     ->with('alert', [
                         'class' => 'warning',

@@ -37,13 +37,23 @@ class SaveSchemaTableColumnRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name.*' => 'required|alpha_dash|max:255',
+        $rules = [
             'datatype.*' => 'required|alpha_dash|max:50',
             'length.*' => 'required|max:255',
             'default_value.*' => 'max:255',
             'comment.*' => 'max:255',
         ];
+
+        for($i = 0; $i < count($this->schemaTableColumns['id']); $i++) {
+            $existingSchemaTableColumn = request()->schemaTable
+                ->schemaTableColumns()
+                ->find($this->schemaTableColumns['id'][$i]);
+
+            $unique = 'unique:schema_table_columns,name,'.($existingSchemaTableColumn ? $existingSchemaTableColumn->id : 'null').',id,schema_table_id,'.request()->schemaTable->id;
+            $rules['name.'.$i] = 'required|alpha_dash|max:255|'.$unique;
+        }
+
+        return $rules;
     }
 
     public function attributes()

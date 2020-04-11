@@ -14,6 +14,9 @@ return [
     'hello' => 'Hello',
     'thanks' => 'Thanks',
     'save' => 'Save',
+    'cancel' => 'Cancel',
+    'delete_item' => 'Delete this item?',
+    'delete' => 'Delete',
     'saving' => 'Saving...',
     'loading' => 'Loading...',
     'sign_in' => 'Sign in',
@@ -60,4 +63,7 @@ return [
     'ai' => 'Auto increment',
     'default' => 'Default',
     'in_row' => 'in row',
+    'table_changes_saved_successfully' => 'Table information has been saved successfully.',
+    'column_deleted_successfully' => 'The column has been deleted successfully.',
+    'table_with_name_already_exists' => 'A table with the same name already exists.',
 ];

@@ -29,9 +29,10 @@
                 </ul>
                 <ul class="navbar-nav">
                     @if(Auth::check())
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Features <span class="sr-only">(current)</span></a>
+                    <li class="nav-item{{ request()->route()->getName() == 'schemas.index' ? ' active' : null }}">
+                        <a class="nav-link" href="{{ route('schemas.index') }}">@lang('form.schemas')</a>
                     </li>
+                    {{--
                     <li class="nav-item">
                         <a class="nav-link" href="#">Enterprise</a>
                     </li>
@@ -40,8 +41,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link disabled" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
+                    </li> --}}
+                    <li class="nav-item border-left">
                         <a class="nav-link" href="javascript: APP.common.signOut()" id="sign_out_btn">@lang('form.sign_out')</a>
                     </li>
                     <form id="sign_out_form" action="{{ route('logout') }}" method="POST">
@@ -61,11 +62,13 @@
 
         <div class="main_toast_div" aria-live="polite" aria-atomic="true">
             <div id="toast_div">
-                @include('layouts.toast')
             </div>
         </div>
 
         <div class="{{ request()->route()->getName() == 'schemas.show' ? null : 'container' }}">
+            <div id="main_alert_div">
+                @include('layouts.alert')
+            </div>
             @yield('content')
         </div>
 

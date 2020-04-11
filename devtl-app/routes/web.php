@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('schemas/{schema}/tables', ['as' => 'schemaTables.index', 'uses' => 'SchemaTableController@index']);
     Route::post('schemas/{schema}/tables', ['as' => 'schemaTables.store', 'uses' => 'SchemaTableController@store']);
     Route::post('schema-tables/{schemaTable}', ['as' => 'schemaTables.update', 'uses' => 'SchemaTableController@update']);
+    Route::get('schema-tables/{schemaTable}/delete', ['as' => 'schemaTables.delete', 'uses' => 'SchemaTableController@delete']);
 
     Route::get('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.columns', 'uses' => 'SchemaTableController@columns']);
     Route::post('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.updateColumns', 'uses' => 'SchemaTableController@updateColumns']);

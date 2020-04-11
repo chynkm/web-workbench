@@ -58,14 +58,14 @@ APP.schemaTable = {
     tableForm: $('#create_schema_table_form'),
     columnForm: $('#create_schema_table_column_form'),
     tableErrorDiv: $('#table_error_display_div'),
-    sidebarTables: $('.sidebar_tables_listing'),
+    tableListing: $('#table_listing'),
+    tableColumnListing: $('#table_column_listing'),
     init: function() {
         this.addRemoveRow();
         this.disableLastDeleteButton();
         this.createTable();
         this.saveTableAndColumns();
         this.deleteTableColumns();
-        this.clickTableInHorizontalListing();
         this.changeTableAndColumns();
         this.autoIncrementEvent();
         this.zeroFillEvent();
@@ -108,8 +108,7 @@ APP.schemaTable = {
         $('#create_table_btn').click(function() {
             self.clearErrors();
             self.overlay.removeClass('d-none');
-            $('#table_listing').addClass('d-none');
-            $('#table_column_listing').removeClass('d-none');
+            self.tableColumnListing.removeClass('d-none');
             self.tableName.val('');
             self.tableEngine.val($(this).data('engine'));
             self.tableCollation.val($(this).data('collation'));
@@ -125,24 +124,11 @@ APP.schemaTable = {
         });
     },
 
-    clickTableInHorizontalListing: function() {
-        var self = this;
-
-        $('#table_listing').on('click', '.table_button', function() {
-            $('#table_listing').addClass('d-none');
-            $('#table_column_listing').removeClass('d-none');
-            self.sidebarTables
-                .find('[data-name="'+$(this).data('name')+'"]')
-                .click()
-                .addClass('btn-primary')
-                .removeClass('btn-outline-primary');
-        });
-    },
-
     changeTableAndColumns: function() {
         var self = this;
 
-        $('.sidebar_tables_listing').on('click', '.table_button', function() {
+        this.tableListing.on('click', '.table_button', function() {
+            self.tableColumnListing.removeClass('d-none');
             self.clearErrors();
             self.overlay.removeClass('d-none');
             self.tableErrorDiv.empty();
@@ -202,11 +188,11 @@ APP.schemaTable = {
             $.post(self.tableForm.attr('action'), self.tableForm.serialize())
                 .done(function(data) {
                     if (data.status) {
-                        self.sidebarTables
+                        self.tableListing
                             .empty()
-                            .html(data.sidebarHtml);
+                            .html(data.tables);
 
-                        self.sidebarTables
+                        self.tableListing
                             .find('[data-name="'+self.tableName.val()+'"]')
                             .addClass('btn-primary')
                             .removeClass('btn-outline-primary');

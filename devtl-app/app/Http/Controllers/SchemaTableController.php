@@ -36,7 +36,7 @@ class SchemaTableController extends Controller
 
         return response()->json([
             'status' => true,
-            'sidebarHtml' => $this->sideBarView($schema),
+            'tables' => $this->tableView($schema),
             'table_url' => route('schemaTables.update', ['schemaTable' => $schemaTable->id]),
             'column_url' => route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]),
         ]);
@@ -54,14 +54,20 @@ class SchemaTableController extends Controller
 
         return response()->json([
             'status' => true,
-            'sidebarHtml' => $this->sideBarView($schemaTable->schema),
+            'tables' => $this->tableView($schemaTable->schema),
         ]);
     }
 
-    protected function sideBarView($schema)
+    protected function tableView($schema)
     {
         $schemaTables = $schema->schemaTables->sortBy('name');
-        return view('schemaTables.sideBarColumn', compact('schemaTables'))->render();
+        return view('schemaTables.tables', compact('schemaTables'))->render();
+    }
+
+    public function delete($schemaTable)
+    {
+        $schemaTable->delete();
+        return response()->json(['status' => true]);
     }
 
     public function columns($schemaTable)

@@ -25,11 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::get('schemas/{schema}', ['as' => 'schemas.show', 'uses' => 'SchemaController@show']);
 
     Route::get('schemas/{schema}/tables', ['as' => 'schemaTables.index', 'uses' => 'SchemaTableController@index']);
+    Route::get('schemas/{schema}/create', ['as' => 'schemaTables.create', 'uses' => 'SchemaTableController@create']);
     Route::post('schemas/{schema}/tables', ['as' => 'schemaTables.store', 'uses' => 'SchemaTableController@store']);
+    Route::get('schema-tables/{schemaTable}/edit', ['as' => 'schemaTables.edit', 'uses' => 'SchemaTableController@edit']);
     Route::post('schema-tables/{schemaTable}', ['as' => 'schemaTables.update', 'uses' => 'SchemaTableController@update']);
     Route::get('schema-tables/{schemaTable}/delete', ['as' => 'schemaTables.delete', 'uses' => 'SchemaTableController@delete']);
 
-    Route::get('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.columns', 'uses' => 'SchemaTableController@columns']);
+    // Route::get('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.columns', 'uses' => 'SchemaTableController@columns']);
     Route::post('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.updateColumns', 'uses' => 'SchemaTableController@updateColumns']);
 
     Route::get('schema-table-columns/{schemaTableColumn}/delete', ['as' => 'schemaTableColumns.delete', 'uses' => 'SchemaTableColumnController@delete']);

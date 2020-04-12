@@ -40,6 +40,7 @@ return [
     'name_your_schema' => 'Name your schema',
     'schema_name' => 'Schema name',
     'tables' => 'tables',
+    'tables_listing' => 'Tables',
     'create_table' => 'Create table',
     'table_name' => 'Table name',
     'enter_table_name' => 'Enter a table name',
@@ -66,4 +67,7 @@ return [
     'table_changes_saved_successfully' => 'Table information has been saved successfully.',
     'column_deleted_successfully' => 'The column has been deleted successfully.',
     'table_with_name_already_exists' => 'A table with the same name already exists.',
+    'no_of_columns' => '# of columns',
+    'action' => 'Action',
+    'no_tables' => 'No tables found',
 ];

@@ -48,28 +48,29 @@ var APP = APP || {};
 APP.schemaTable = {
     tableDetailBody: $('#table_detail_tbody'),
     exampleRow: $('#column_example_row tbody').html(),
-    tableButton: $('.table_button'),
     tableName: $('#table_name'),
-    tableEngine: $('#table_engine'),
-    tableCollation: $('#table_collation'),
     autoIncrementTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'],
     inputFields: ['name', 'length', 'comment', 'default_value',],
     overlay: $('#overlay'),
     tableForm: $('#create_schema_table_form'),
     columnForm: $('#create_schema_table_column_form'),
     tableErrorDiv: $('#table_error_display_div'),
-    tableListing: $('#table_listing'),
     tableColumnListing: $('#table_column_listing'),
     init: function() {
         this.addRemoveRow();
+        this.setCollationAndEngine();
         this.disableLastDeleteButton();
-        this.createTable();
         this.saveTableAndColumns();
         this.deleteTableColumns();
-        this.changeTableAndColumns();
+        this.sortTableColumns();
         this.autoIncrementEvent();
         this.zeroFillEvent();
         this.primaryKeyEvent();
+    },
+
+    setCollationAndEngine: function() {
+        $('#table_engine').val(this.tableForm.data('engine'));
+        $('#table_collation').val(this.tableForm.data('collation'));
     },
 
     addRemoveRow: function() {
@@ -102,70 +103,6 @@ APP.schemaTable = {
             .prop('disabled', true);
     },
 
-    createTable: function() {
-        var self = this;
-
-        $('#create_table_btn').click(function() {
-            self.clearErrors();
-            self.overlay.removeClass('d-none');
-            self.tableColumnListing.removeClass('d-none');
-            self.tableName.val('');
-            self.tableEngine.val($(this).data('engine'));
-            self.tableCollation.val($(this).data('collation'));
-            self.tableForm.attr('action', $(this).data('route_save_table'))
-            self.tableDetailBody
-                .empty()
-                .append(self.exampleRow);
-            self.disableLastDeleteButton();
-            self.tableButton
-                .removeClass('btn-primary')
-                .addClass('btn-outline-primary');
-            self.overlay.addClass('d-none');
-        });
-    },
-
-    changeTableAndColumns: function() {
-        var self = this;
-
-        this.tableListing.on('click', '.table_button', function() {
-            self.tableColumnListing.removeClass('d-none');
-            self.clearErrors();
-            self.overlay.removeClass('d-none');
-            self.tableErrorDiv.empty();
-            var clickedTable = $(this);
-            self.tableButton
-                .removeClass('btn-primary')
-                .addClass('btn-outline-primary');
-            clickedTable.addClass('btn-primary')
-                .removeClass('btn-outline-primary');
-
-            $.getJSON(clickedTable.data('route_get_columns'))
-                .done(function(data) {
-                    if (data.status) {
-                        self.tableName.val(clickedTable.data('name'));
-                        self.tableEngine.val(clickedTable.data('engine'));
-                        self.tableCollation.val(clickedTable.data('collation'));
-                        self.tableForm.attr('action', clickedTable.data('route_save_table'))
-                        self.columnForm.attr('action', clickedTable.data('route_save_columns'))
-                        self.tableDetailBody
-                            .empty()
-                            .append(data.html)
-                            .append(self.exampleRow);
-                        self.sortTableColumns();
-                        self.disableLastDeleteButton();
-
-                        self.autoIncrementOnLoad();
-                        self.zeroFillOnLoad();
-                        self.primaryKeyOnLoad();
-                    } else {
-                        // @todo some error occurred, try again
-                        // add it to common.js
-                    }
-                    self.overlay.addClass('d-none');
-                });
-        });
-    },
-
     clearErrors: function() {
         this.tableForm
             .find('.is-invalid')
@@ -188,20 +125,13 @@ APP.schemaTable = {
             $.post(self.tableForm.attr('action'), self.tableForm.serialize())
                 .done(function(data) {
                     if (data.status) {
-                        self.tableListing
-                            .empty()
-                            .html(data.tables);
-
-                        self.tableListing
-                            .find('[data-name="'+self.tableName.val()+'"]')
-                            .addClass('btn-primary')
-                            .removeClass('btn-outline-primary');
-
                         if (data.table_url) {
                             self.tableForm.attr('action', data.table_url)
                             self.columnForm.attr('action', data.column_url)
+                            history.pushState(null, '', data.current_url);
                         }
 
+                        $('#table_title').html(self.tableName.val());
                         self.saveColumns(self);
                     }
                 })

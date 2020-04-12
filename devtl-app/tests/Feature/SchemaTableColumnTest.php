@@ -14,6 +14,7 @@ class SchemaTableColumnTest extends TestCase
 
     public function testGuestCannotFetchSchemaTableColumns()
     {
+        $this->markTestSkipped('Removed Ajax schemaTableColumn fetch');
         $schema = factory('App\Models\Schema')->create();
         $schemaTable = factory('App\Models\SchemaTable')->create(['schema_id' => $schema->id]);
 
@@ -52,6 +53,7 @@ class SchemaTableColumnTest extends TestCase
 
     public function testUserCanViewSchemaTableColumnsListing()
     {
+        $this->markTestSkipped('Removed Ajax schemaTableColumn fetch');
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
         Auth::user()
@@ -73,6 +75,7 @@ class SchemaTableColumnTest extends TestCase
 
     public function testAUserCannotViewOtherUsersSchemaTableColumns()
     {
+        $this->markTestSkipped('Removed Ajax schemaTableColumn fetch');
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
         Auth::user()
@@ -157,7 +160,7 @@ class SchemaTableColumnTest extends TestCase
 
         $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $data)
             ->assertOk()
-            ->assertJsonStructure(['status', 'html']);
+            ->assertJsonStructure(['status']);
 
         $this->assertDatabaseHas('schema_table_columns', [
             'name' => 'id',
@@ -260,7 +263,7 @@ class SchemaTableColumnTest extends TestCase
 
         $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $data)
             ->assertOk()
-            ->assertJsonStructure(['status', 'html']);
+            ->assertJsonStructure(['status']);
 
         $this->assertDatabaseHas('schema_table_columns', [
             'name' => 'user_id',
@@ -305,7 +308,7 @@ class SchemaTableColumnTest extends TestCase
         $attributes['schema_table_columns']['id'] = ['null', 'null'];
         $attributes['schema_table_columns'][$field] = [$input];
 
-        $this->post(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]), $attributes)
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $attributes)
             ->assertSessionHasErrors($field.'.*');
     }
 
@@ -340,7 +343,7 @@ class SchemaTableColumnTest extends TestCase
         ];
         $attributes['schema_table_columns']['name'] = [$schemaTableColumn->first()->name];
 
-        $this->post(route('schemaTables.columns', ['schemaTable' => $schemaTableColumn->schemaTable->id]), $attributes)
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTableColumn->schemaTable->id]), $attributes)
             ->assertRedirect(route('schemas.index'));
     }
 
@@ -370,7 +373,7 @@ class SchemaTableColumnTest extends TestCase
             $schemaTableColumns->first()->name, //using first table name for second table
         ];
 
-        $this->post(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]), $attributes)
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $attributes)
             ->assertSessionHasErrors('name.*');
     }
 

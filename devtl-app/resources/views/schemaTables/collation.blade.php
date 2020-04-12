@@ -397,7 +397,7 @@
         <option>utf8mb4_turkish_ci</option>
         <option>utf8mb4_unicode_520_ci</option>
         <option>utf8mb4_unicode_520_nopad_ci</option>
-        <option selected>utf8mb4_unicode_ci</option>
+        <option>utf8mb4_unicode_ci</option>
         <option>utf8mb4_unicode_nopad_ci</option>
         <option>utf8mb4_vietnamese_ci</option>
     </optgroup>

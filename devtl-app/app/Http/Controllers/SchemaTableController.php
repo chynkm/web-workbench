@@ -23,6 +23,29 @@ class SchemaTableController extends Controller
         ));
     }
 
+    public function create($schema)
+    {
+        $pageTitle = $schema->name;
+
+        return view('schemaTables.createEdit', compact(
+            'pageTitle',
+            'schema',
+        ));
+    }
+
+    public function edit($schemaTable)
+    {
+        $pageTitle = $schemaTable->name;
+        $schemaTableColumns = $schemaTable->schemaTableColumns
+            ->sortBy('order');
+
+        return view('schemaTables.createEdit', compact(
+            'pageTitle',
+            'schemaTable',
+            'schemaTableColumns',
+        ));
+    }
+
     public function store($schema, SaveSchemaTableRequest $request)
     {
         $schemaTable = $schema->schemaTables()
@@ -36,7 +59,7 @@ class SchemaTableController extends Controller
 
         return response()->json([
             'status' => true,
-            'tables' => $this->tableView($schema),
+            'current_url' => route('schemaTables.edit', ['schemaTable' => $schemaTable->id]),
             'table_url' => route('schemaTables.update', ['schemaTable' => $schemaTable->id]),
             'column_url' => route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]),
         ]);
@@ -52,33 +75,13 @@ class SchemaTableController extends Controller
             'description' => $request->description,
         ]);
 
-        return response()->json([
-            'status' => true,
-            'tables' => $this->tableView($schemaTable->schema),
-        ]);
-    }
-
-    protected function tableView($schema)
-    {
-        $schemaTables = $schema->schemaTables->sortBy('name');
-        return view('schemaTables.tables', compact('schemaTables'))->render();
+        return response()->json(['status' => true]);
     }
 
     public function delete($schemaTable)
     {
         $schemaTable->delete();
         return response()->json(['status' => true]);
-    }
-
-    public function columns($schemaTable)
-    {
-        $schemaTableColumns = $schemaTable->schemaTableColumns
-            ->sortBy('order');
-
-        return response()->json([
-            'status' => true,
-            'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
-        ]);
     }
 
     public function updateColumns($schemaTable, SaveSchemaTableColumnRequest $request)

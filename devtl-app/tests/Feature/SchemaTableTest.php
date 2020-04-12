@@ -68,7 +68,7 @@ class SchemaTableTest extends TestCase
         $attributes['collation'] = Str::random(25);
 
         $this->post(route('schemaTables.store', ['schema' => $schema->id]), $attributes)
-            ->assertJsonStructure(['status', 'tables', 'table_url', 'column_url']);
+            ->assertJsonStructure(['status', 'table_url', 'column_url']);
 
         $this->assertDatabaseHas('schema_tables', [
             'name' => $attributes['name'],
@@ -94,7 +94,7 @@ class SchemaTableTest extends TestCase
         $attributes['collation'] = Str::random(25);
 
         $this->post(route('schemaTables.update', ['schemaTable' => $schemaTable->id]), $attributes)
-            ->assertJsonStructure(['status', 'tables']);
+            ->assertJsonStructure(['status']);
 
         $this->assertDatabaseHas('schema_tables', [
             'name' => $attributes['name'],

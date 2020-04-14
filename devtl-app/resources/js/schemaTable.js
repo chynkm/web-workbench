@@ -50,7 +50,8 @@ APP.schemaTable = {
     exampleRow: $('#column_example_row tbody').html(),
     tableName: $('#table_name'),
     autoIncrementTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'],
-    inputFields: ['name', 'length', 'comment', 'default_value',],
+    unsignedTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'],
+    inputFields: ['name', 'length', 'comment', 'default_value'],
     overlay: $('#overlay'),
     tableForm: $('#create_schema_table_form'),
     columnForm: $('#create_schema_table_column_form'),
@@ -61,11 +62,18 @@ APP.schemaTable = {
         this.setCollationAndEngine();
         this.disableLastDeleteButton();
         this.saveTableAndColumns();
-        this.deleteTableColumns();
+        this.deleteTableAndColumn();
         this.sortTableColumns();
         this.autoIncrementEvent();
         this.zeroFillEvent();
         this.primaryKeyEvent();
+        this.onLoadEvents();
+    },
+
+    onLoadEvents: function() {
+        this.autoIncrementOnLoad();
+        this.zeroFillOnLoad();
+        this.primaryKeyOnLoad();
     },
 
     setCollationAndEngine: function() {
@@ -166,9 +174,7 @@ APP.schemaTable = {
                     self.sortTableColumns();
                     self.disableLastDeleteButton();
 
-                    self.autoIncrementOnLoad();
-                    self.zeroFillOnLoad();
-                    self.primaryKeyOnLoad();
+                    self.onLoadEvents();
                 }
             })
             .fail(function(xhr) {
@@ -202,26 +208,42 @@ APP.schemaTable = {
             });
     },
 
-    deleteTableColumns: function() {
+    deleteTableAndColumn: function() {
         $('#delete_confirm_modal').on('show.bs.modal', function(e) {
             $('#delete_ok').click(function() {
-                if ($(e.relatedTarget).data('href').length) {
-                    $.getJSON($(e.relatedTarget).data('href'), function(data) {
-                        if (data.status) {
+                switch($(e.relatedTarget).data('item')) {
+                    case 'schema_table_column':
+                        if ($(e.relatedTarget).data('href').length) {
+                            $.getJSON($(e.relatedTarget).data('href'), function(data) {
+                                if (data.status) {
+                                    $(e.relatedTarget).closest('tr.table_column_row')
+                                        .addClass('table-danger')
+                                        .fadeOut('slow', function() {
+                                            $(this).remove();
+                                        });
+                                }
+                            });
+                        } else {
                             $(e.relatedTarget).closest('tr.table_column_row')
                                 .addClass('table-danger')
                                 .fadeOut('slow', function() {
                                     $(this).remove();
                                 });
                         }
-                    });
-                } else {
-                    $(e.relatedTarget).closest('tr.table_column_row')
-                        .addClass('table-danger')
-                        .fadeOut('slow', function() {
-                            $(this).remove();
+                        break;
+                    case 'schema_table':
+                        $.getJSON($(e.relatedTarget).data('href'), function(data) {
+                            if (data.status) {
+                                $(e.relatedTarget).closest('tr.table_row')
+                                    .addClass('table-danger')
+                                    .fadeOut('slow', function() {
+                                        $(this).remove();
+                                    });
+                            }
                         });
+                        break;
                 }
+
                 $('#delete_confirm_modal').modal('hide');
             });
         });
@@ -255,6 +277,8 @@ APP.schemaTable = {
                     .prop('disabled', true);
                 row.find('.primary_key_column').prop('checked', true);
             }
+
+            self.autoIncrementOnLoad();
         });
 
         $('#table_detail_tbody').on('change', '.datatype', function() {
@@ -263,14 +287,16 @@ APP.schemaTable = {
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
                 // if not an INT type
-                row.find('.auto_increment_column')
+                row.find('.auto_increment_column, .primary_key_column')
                     .prop('checked', false)
                     .prop('disabled', true);
                 row.find('.null_column, .default_value')
                     .prop('disabled', false);
-            } else {
-                // if not an AI column
-                row.find('.auto_increment_column')
+            }
+
+            // if changing from non-INTS to INTS
+            if ($.inArray(selectedType, self.autoIncrementTypes) > -1) {
+                row.find('.auto_increment_column, .primary_key_column')
                     .prop('disabled', false);
             }
         });
@@ -284,12 +310,12 @@ APP.schemaTable = {
             var selectedType = row.find('.datatype option:selected').val();
 
             if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
-                // if not an INT type
-                row.find('.auto_increment_column')
+                row.find('.auto_increment_column, .primary_key_column')
                     .prop('checked', false)
                     .prop('disabled', true);
-            } else if(row.find('.auto_increment_column').is(':checked')) {
-                // if AI column
+            }
+
+            if(row.find('.auto_increment_column').is(':checked')) {
                 row.find('.null_column')
                     .prop('checked', false)
                     .prop('disabled', true);
@@ -312,14 +338,12 @@ APP.schemaTable = {
 
             if (
                 $(this).is(':checked')
-                && $.inArray(selectedType, self.autoIncrementTypes) != -1
+                && $.inArray(selectedType, self.unsignedTypes) != -1
             ) {
-                // ZF ticked, then UN is disabled
                 row.find('.unsigned_column')
                     .prop('checked', false)
                     .prop('disabled', true);
             } else {
-                // ZF unticked, then UN is enabled
                 row.find('.unsigned_column').prop('disabled', false);
             }
         });
@@ -328,12 +352,11 @@ APP.schemaTable = {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
-            if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
+            if($.inArray(selectedType, self.unsignedTypes) == -1) {
                 row.find('.unsigned_column, .zero_fill_column')
                     .prop('checked', false)
                     .prop('disabled', true);
             } else {
-                // ZF, UN available for INT types
                 row.find('.unsigned_column, .zero_fill_column')
                     .prop('disabled', false);
             }
@@ -344,16 +367,18 @@ APP.schemaTable = {
         var self = this;
 
         $('#table_detail_tbody').find('.table_column_row').each(function() {
-            var row = $(this);
+            var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
-            if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
+            if($.inArray(selectedType, self.unsignedTypes) == -1) {
                 row.find('.unsigned_column, .zero_fill_column')
                     .prop('checked', false)
                     .prop('disabled', true);
-            } else if(row.find('.zero_fill_column').is(':checked')) {
-                // ZF, UN available for INT types
+            }
+
+            if(row.find('.zero_fill_column').is(':checked')) {
                 row.find('.unsigned_column')
+                    .prop('checked', false)
                     .prop('disabled', true);
             }
         });
@@ -377,7 +402,7 @@ APP.schemaTable = {
 
             if (
                 $(this).is(':checked')
-                && $.inArray(selectedType, self.autoIncrementTypes) == -1
+                && $.inArray(selectedType, self.autoIncrementTypes) > -1
             ) {
                 row.find('.unique_column, .null_column')
                     .prop('checked', false)
@@ -394,15 +419,15 @@ APP.schemaTable = {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
-            if(
-                row.find('.primary_key_column').is(':checked')
+            if (
+                $(this).is(':checked')
                 && $.inArray(selectedType, self.autoIncrementTypes) == -1
             ) {
-                row.find('.unique_column, .null_column, .primary_key_column')
+                row.find('.unique_column, .null_column')
                     .prop('checked', false)
                     .prop('disabled', true);
             } else {
-                row.find('.unique_column, .null_column, .primary_key_column')
+                row.find('.unique_column, .null_column')
                     .prop('disabled', false);
             }
         });
@@ -415,8 +440,8 @@ APP.schemaTable = {
             var row = $(this);
             var selectedType = row.find('.datatype option:selected').val();
 
-            if($.inArray(selectedType, self.autoIncrementTypes) == -1) {
-                row.find('.unique_column, .null_column, .primary_key_column')
+            if(row.find('.primary_key_column').is(':checked')) {
+                row.find('.unique_column, .null_column')
                     .prop('checked', false)
                     .prop('disabled', true);
             }

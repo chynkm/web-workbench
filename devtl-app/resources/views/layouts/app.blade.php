@@ -26,12 +26,14 @@
             </button>
             <nav class="collapse navbar-collapse my-2 my-md-0 mr-md-3" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
-                </ul>
-                <ul class="navbar-nav">
                     @if(Auth::check())
                     <li class="nav-item{{ request()->route()->getName() == 'schemas.index' ? ' active' : null }}">
                         <a class="nav-link" href="{{ route('schemas.index') }}">@lang('form.schemas')</a>
                     </li>
+                    @endif
+                </ul>
+                <ul class="navbar-nav">
+                    @if(Auth::check())
                     {{--
                     <li class="nav-item">
                         <a class="nav-link" href="#">Enterprise</a>
@@ -42,7 +44,7 @@
                     <li class="nav-item">
                         <a class="nav-link disabled" href="#">Pricing</a>
                     </li> --}}
-                    <li class="nav-item border-left">
+                    <li class="nav-item">
                         <a class="nav-link" href="javascript: APP.common.signOut()" id="sign_out_btn">@lang('form.sign_out')</a>
                     </li>
                     <form id="sign_out_form" action="{{ route('logout') }}" method="POST">
@@ -70,6 +72,20 @@
                 @include('layouts.alert')
             </div>
             @yield('content')
+        </div>
+
+        <div class="modal fade" id="delete_confirm_modal" tabindex="-1" role="dialog" aria-labelledby="deleteItem" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="text-center"><span class="oi oi-warning text-danger warning_sign"></span> @lang('form.delete_item')</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('form.cancel')</button>
+                        <button type="button" class="btn btn-danger text-white" id="delete_ok">@lang('form.delete')</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <footer class="footer">

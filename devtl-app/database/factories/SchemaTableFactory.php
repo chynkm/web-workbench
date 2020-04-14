@@ -10,7 +10,7 @@ $factory->define(SchemaTable::class, function (Faker $faker) {
         'user_id' => factory(App\Models\User::class),
         'schema_id' => factory(App\Models\Schema::class),
         'name' => $faker->word,
-        'engine' => "InnoDB",
-        'collation' => "utf8mb4_unicode_ci",
+        'engine' => config('env.first_table_engine'),
+        'collation' => config('env.first_table_collation'),
     ];
 });

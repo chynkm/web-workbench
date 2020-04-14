@@ -12,7 +12,7 @@ class SchemaTableColumnTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    public function testGuestCannotFetchSchemaTableColumns()
+    /*public function testGuestCannotFetchSchemaTableColumns()
     {
         $this->markTestSkipped('Removed Ajax schemaTableColumn fetch');
         $schema = factory('App\Models\Schema')->create();
@@ -20,7 +20,7 @@ class SchemaTableColumnTest extends TestCase
 
         $this->get(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]))
             ->assertRedirect('login');
-    }
+    }*/
 
     public function testGuestCannotCreateSchemaTableColumns()
     {
@@ -51,7 +51,7 @@ class SchemaTableColumnTest extends TestCase
             ->assertRedirect('login');
     }
 
-    public function testUserCanViewSchemaTableColumnsListing()
+    /*public function testUserCanViewSchemaTableColumnsListing()
     {
         $this->markTestSkipped('Removed Ajax schemaTableColumn fetch');
         $this->signIn();
@@ -88,7 +88,7 @@ class SchemaTableColumnTest extends TestCase
 
         $this->get(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]))
             ->assertRedirect(route('schemas.index'));
-    }
+    }*/
 
     public function testUserCanCreateSchemaTableColumns()
     {
@@ -121,28 +121,28 @@ class SchemaTableColumnTest extends TestCase
                 40,
             ],
             'unsigned' => [
-                'true',
-                'false',
+                1,
+                0,
             ],
             'auto_increment' => [
-                'true',
-                'false',
+                1,
+                0,
             ],
             'primary_key' => [
-                'true',
-                'false',
+                1,
+                0,
             ],
             'unique' => [
-                'false',
-                'false',
+                0,
+                0,
             ],
             'zero_fill' => [
-                'false',
-                'false',
+                0,
+                0,
             ],
             'nullable' => [
-                'false',
-                'false',
+                0,
+                0,
             ],
             'comment' => [
                 null,
@@ -215,34 +215,34 @@ class SchemaTableColumnTest extends TestCase
                 20,
             ],
             'unsigned' => [
-                'true',
-                'false',
-                'true',
+                1,
+                0,
+                1,
             ],
             'auto_increment' => [
-                'true',
-                'false',
-                'false',
+                1,
+                0,
+                0,
             ],
             'primary_key' => [
-                'true',
-                'false',
-                'false',
+                1,
+                0,
+                0,
             ],
             'unique' => [
-                'false',
-                'false',
-                'false',
+                0,
+                0,
+                0,
             ],
             'zero_fill' => [
-                'false',
-                'false',
-                'false',
+                0,
+                0,
+                0,
             ],
             'nullable' => [
-                'false',
-                'false',
-                'false',
+                0,
+                0,
+                0,
             ],
             'comment' => [
                 'yay',
@@ -282,6 +282,21 @@ class SchemaTableColumnTest extends TestCase
             'datatype' => 'bigint',
             'length' => 20,
             'order' => 4
+        ]);
+
+        $this->assertDatabaseHas('schema_table_column_histories', [
+            'schema_table_column_id' => $schemaTableColumns->first()->id,
+            'name' => $schemaTableColumns->first()->name,
+            'datatype' => $schemaTableColumns->first()->datatype,
+            'length' => $schemaTableColumns->first()->length,
+            'order' => $schemaTableColumns->first()->order,
+        ]);
+        $this->assertDatabaseHas('schema_table_column_histories', [
+            'schema_table_column_id' => $schemaTableColumns->last()->id,
+            'name' => $schemaTableColumns->last()->name,
+            'datatype' => $schemaTableColumns->last()->datatype,
+            'length' => $schemaTableColumns->last()->length,
+            'order' => $schemaTableColumns->last()->order,
         ]);
     }
 
@@ -324,11 +339,33 @@ class SchemaTableColumnTest extends TestCase
             [null, 'datatype'],
             [Str::random(51), 'datatype'],
             ['spaced datatype', 'datatype'],
-            ['', 'length'],
-            [null, 'length'],
             [Str::random(256), 'length'],
             [Str::random(256), 'default_value'],
             [Str::random(256), 'comment'],
+            [2, 'nullable'],
+            [null, 'nullable'],
+            ['', 'nullable'],
+            ['a', 'nullable'],
+            [2, 'unsigned'],
+            [null, 'unsigned'],
+            ['', 'unsigned'],
+            ['a', 'unsigned'],
+            [2, 'unique'],
+            [null, 'unique'],
+            ['', 'unique'],
+            ['a', 'unique'],
+            [2, 'auto_increment'],
+            [null, 'auto_increment'],
+            ['', 'auto_increment'],
+            ['a', 'auto_increment'],
+            [2, 'primary_key'],
+            [null, 'primary_key'],
+            ['', 'primary_key'],
+            ['a', 'primary_key'],
+            [2, 'zero_fill'],
+            [null, 'zero_fill'],
+            ['', 'zero_fill'],
+            ['a', 'zero_fill'],
         ];
     }
 

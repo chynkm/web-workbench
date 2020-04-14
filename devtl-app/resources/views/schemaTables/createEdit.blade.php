@@ -76,20 +76,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="delete_confirm_modal" tabindex="-1" role="dialog" aria-labelledby="createSchemaLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="text-center"><span class="oi oi-warning text-danger warning_sign"></span> @lang('form.delete_item')</h4>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('form.cancel')</button>
-                <button type="button" class="btn btn-danger text-white" id="delete_ok">@lang('form.delete')</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <table id="column_example_row" class="d-none">
     <tbody>
         @include('schemaTableColumns.exampleRow', ['schemaTableColumn' => null])

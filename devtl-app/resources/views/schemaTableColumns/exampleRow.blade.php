@@ -41,6 +41,7 @@
         <button type="button"
             class="btn btn-danger btn-sm delete_column_button"
             data-href="{{ isset($schemaTableColumn) ? route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]) : null }}"
+            data-item="schema_table_column"
             data-toggle="modal"
             data-target="#delete_confirm_modal">
                 <span class="oi oi-x"></span>

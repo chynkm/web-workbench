@@ -39,9 +39,15 @@ class SaveSchemaTableColumnRequest extends FormRequest
     {
         $rules = [
             'datatype.*' => 'required|alpha_dash|max:50',
-            'length.*' => 'required|max:255',
+            'length.*' => 'max:255',
             'default_value.*' => 'max:255',
             'comment.*' => 'max:255',
+            'nullable.*' => 'in:0,1',
+            'unsigned.*' => 'in:0,1',
+            'unique.*' => 'in:0,1',
+            'auto_increment.*' => 'in:0,1',
+            'primary_key.*' => 'in:0,1',
+            'zero_fill.*' => 'in:0,1',
         ];
 
         for($i = 0; $i < count($this->schemaTableColumns['id']); $i++) {
@@ -65,6 +71,12 @@ class SaveSchemaTableColumnRequest extends FormRequest
             $attributes['length.'.$i] = __('form.length').' '.__('form.in_row').' '.$j;
             $attributes['default_value.'.$i] = __('form.default_value').' '.__('form.in_row').' '.$j;
             $attributes['comment.'.$i] = __('form.comment').' '.__('form.in_row').' '.$j;
+            $attributes['nullable.'.$i] = __('form.null').' '.__('form.in_row').' '.$j;
+            $attributes['unsigned.'.$i] = __('form.un').' '.__('form.in_row').' '.$j;
+            $attributes['unique.'.$i] = __('form.uq').' '.__('form.in_row').' '.$j;
+            $attributes['auto_increment.'.$i] = __('form.ai').' '.__('form.in_row').' '.$j;
+            $attributes['primary_key.'.$i] = __('form.pk').' '.__('form.in_row').' '.$j;
+            $attributes['zero_fill.'.$i] = __('form.zf').' '.__('form.in_row').' '.$j;
         }
 
         return $attributes;

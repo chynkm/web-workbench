@@ -23,4 +23,11 @@ class SchemaTableTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $schemaTable->schemaTableColumns);
     }
+
+    public function testSchemaTableHasManySchemaTableHistories()
+    {
+        $schemaTable = factory('App\Models\SchemaTable')->create();
+
+        $this->assertInstanceOf(Collection::class, $schemaTable->schemaTableHistories);
+    }
 }

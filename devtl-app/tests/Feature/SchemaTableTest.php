@@ -101,6 +101,12 @@ class SchemaTableTest extends TestCase
             'engine' => $attributes['engine'],
             'collation' => $attributes['collation'],
         ]);
+
+        $this->assertDatabaseHas('schema_table_histories', [
+            'name' => $schemaTable->name,
+            'engine' => $schemaTable->engine,
+            'collation' => $schemaTable->collation,
+        ]);
     }
 
     /**
@@ -167,6 +173,14 @@ class SchemaTableTest extends TestCase
 
         $this->get(route('schemaTables.index', ['schema' => $schema->id]))
             ->assertRedirect(route('schemas.index'));
+    }
+
+    public function testGuestCannotDeleteSchemaTableList()
+    {
+        $schema = factory('App\Models\Schema')->create();
+
+        $this->get(route('schemaTables.index', ['schema' => $schema->id]))
+            ->assertRedirect('login');
     }
 
     public function testUserCannotDeleteOthersSchemaTable()

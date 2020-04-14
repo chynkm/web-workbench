@@ -142,6 +142,9 @@ body {
 .table_detail .table input[type="text"] {
   padding-left: 4px;
 }
+.table_detail .table input[type="text"]:disabled {
+  background-color: #e9ecef
+}
 .table_detail .card-title {
   padding: 0.2rem;
 }

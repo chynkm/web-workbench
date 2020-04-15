@@ -33,8 +33,11 @@ Route::middleware('auth')->group(function () {
 
     // Route::get('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.columns', 'uses' => 'SchemaTableController@columns']);
     Route::post('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.updateColumns', 'uses' => 'SchemaTableController@updateColumns']);
+    Route::post('schema-tables/{schemaTable}/relationships', ['as' => 'schemaTables.updateRelationships', 'uses' => 'SchemaTableController@updateRelationships']);
 
     Route::get('schema-table-columns/{schemaTableColumn}/delete', ['as' => 'schemaTableColumns.delete', 'uses' => 'SchemaTableColumnController@delete']);
+
+    Route::get('relationship/{relationship}/delete', ['as' => 'relationships.delete', 'uses' => 'RelationshipController@delete']);
 });
 
 Route::fallback(function(){

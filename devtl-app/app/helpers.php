@@ -1,8 +1,8 @@
 <?php
 
-if(! function_exists('removeLastRow')) {
+if(! function_exists('removeLastTableColumnRow')) {
 
-    function removeLastRow($schemaTableColumns)
+    function removeLastTableColumnRow($schemaTableColumns)
     {
         $totalRows = count($schemaTableColumns['id']) - 1;
         unset($schemaTableColumns['id'][$totalRows]);
@@ -15,3 +15,19 @@ if(! function_exists('removeLastRow')) {
         return $schemaTableColumns;
     }
 }
+
+if(! function_exists('removeLastRelationshipRow')) {
+
+    function removeLastRelationshipRow($relationships)
+    {
+        $totalRows = count($relationships['id']) - 1;
+        unset($relationships['id'][$totalRows]);
+        unset($relationships['primary_table_column_id'][$totalRows]);
+        unset($relationships['foreign_table_id'][$totalRows]);
+        unset($relationships['foreign_table_column_id'][$totalRows]);
+
+        return $relationships;
+    }
+}
+
+

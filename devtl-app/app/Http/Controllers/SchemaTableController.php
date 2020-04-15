@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveSchemaTableColumnRequest;
 use App\Http\Requests\SaveSchemaTableRequest;
+use App\Models\Relationship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -87,7 +88,7 @@ class SchemaTableController extends Controller
     public function updateColumns($schemaTable, SaveSchemaTableColumnRequest $request)
     {
         // remove last empty row from validation
-        $schemaTableColumns = removeLastRow($request->schema_table_columns);
+        $schemaTableColumns = removeLastTableColumnRow($request->schema_table_columns);
 
         for ($i = 0; $i < count($schemaTableColumns['id']); $i++) {
             $data = [
@@ -130,6 +131,39 @@ class SchemaTableController extends Controller
             'status' => true,
             'toast' => view('layouts.toast', compact('alert'))->render(),
             'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
+        ]);
+    }
+
+    public function updateRelationships($schemaTable, SaveRelationshipRequest $request)
+    {
+        // remove last empty row from validation
+        $relationships = removeLastRelationshipRow($request->relationships);
+
+        for ($i = 0; $i < count($relationships['id']); $i++) {
+            $data = [
+                'user_id' => Auth::id(),
+                'primary_table_id' => $schemaTable->id,
+                'primary_table_column_id' => $relationships['primary_table_column_id'][$i],
+                'foreign_table_id' => $relationships['foreign_table_id'][$i],
+                'foreign_table_column_id' => $relationships['foreign_table_column_id'][$i],
+            ];
+
+            $existingRelationship = Relationship::find($relationships['id'][$i]);
+
+            if (
+                $existingRelationship
+                && $existingRelationship->primary_table_id == $schemaTable->id
+            ) {
+                $existingRelationship->update($data);
+            } else {
+                Relationship::create($data);
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'html' => null,
+            // 'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
         ]);
     }
 }

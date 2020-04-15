@@ -177,9 +177,9 @@ class SchemaTableTest extends TestCase
 
     public function testGuestCannotDeleteSchemaTableList()
     {
-        $schema = factory('App\Models\Schema')->create();
+        $schemaTable = factory('App\Models\SchemaTable')->create();
 
-        $this->get(route('schemaTables.index', ['schema' => $schema->id]))
+        $this->get(route('schemaTables.delete', ['schemaTable' => $schemaTable->id]))
             ->assertRedirect('login');
     }
 

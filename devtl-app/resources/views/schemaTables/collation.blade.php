@@ -1,4 +1,4 @@
-<select name="collation" class="form-control table_collation" id="table_collation">
+<select name="collation" class="form-control mr-2 table_collation" id="table_collation">
     <optgroup label="armscii8">
         <option>armscii8_bin</option>
         <option>armscii8_general_ci</option>

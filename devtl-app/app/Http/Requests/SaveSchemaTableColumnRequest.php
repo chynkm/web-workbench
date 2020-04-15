@@ -26,7 +26,7 @@ class SaveSchemaTableColumnRequest extends FormRequest
     public function validationData()
     {
         // remove last empty row from validation
-        $this->schemaTableColumns = removeLastRow(request()->schema_table_columns);
+        $this->schemaTableColumns = removeLastTableColumnRow(request()->schema_table_columns);
         return $this->schemaTableColumns;
     }
 

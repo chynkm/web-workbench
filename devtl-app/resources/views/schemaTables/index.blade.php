@@ -7,7 +7,7 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-hover">
+    <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th scope="col-1">#</th>

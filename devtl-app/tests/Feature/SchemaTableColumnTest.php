@@ -160,7 +160,7 @@ class SchemaTableColumnTest extends TestCase
 
         $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $data)
             ->assertOk()
-            ->assertJsonStructure(['status']);
+            ->assertJsonStructure(['status', 'html']);
 
         $this->assertDatabaseHas('schema_table_columns', [
             'name' => 'id',
@@ -263,7 +263,7 @@ class SchemaTableColumnTest extends TestCase
 
         $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $data)
             ->assertOk()
-            ->assertJsonStructure(['status']);
+            ->assertJsonStructure(['status', 'html']);
 
         $this->assertDatabaseHas('schema_table_columns', [
             'name' => 'user_id',

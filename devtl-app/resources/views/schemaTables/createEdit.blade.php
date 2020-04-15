@@ -23,7 +23,7 @@
                         onsubmit="return false;">
                         @csrf
                         <div class="form-inline">
-                            <input type="text" class="form-control col-md-6 mr-2 table_name" id="table_name" name="name" placeholder="@lang('form.enter_table_name')" value="{{ isset($schemaTable) ? $schemaTable->name : null }}">
+                            <input type="text" class="form-control col-md-7 mr-2 table_name" id="table_name" name="name" placeholder="@lang('form.enter_table_name')" value="{{ isset($schemaTable) ? $schemaTable->name : null }}">
                             @include('schemaTables.engine')
                             @include('schemaTables.collation')
                         </div>
@@ -64,6 +64,30 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-2">
+    <div class="card-header">
+        @lang('form.foreign_keys')
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th class="th_column_name">@lang('form.column_name')</th>
+                        <th class="th_two_letter">@lang('form.table_name')</th>
+                        <th class="th_two_letter">@lang('form.referenced_column')</th>
+                        <th class="th_sort_column" title="@lang('form.delete')"><span class="oi oi-trash"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="foreign_key_tbody">
+                    <tr>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -78,7 +78,7 @@
                 <thead>
                     <tr>
                         <th class="th_column_name">@lang('form.column_name')</th>
-                        <th class="th_two_letter">@lang('form.table_name')</th>
+                        <th class="th_two_letter">@lang('form.referenced_table')</th>
                         <th class="th_two_letter">@lang('form.referenced_column')</th>
                         <th class="th_sort_column" title="@lang('form.delete')"><span class="oi oi-trash"></span></th>
                     </tr>

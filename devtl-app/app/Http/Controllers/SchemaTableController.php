@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveRelationshipRequest;
 use App\Http\Requests\SaveSchemaTableColumnRequest;
 use App\Http\Requests\SaveSchemaTableRequest;
 use App\Models\Relationship;

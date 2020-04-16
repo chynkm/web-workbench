@@ -198,3 +198,6 @@ body {
 .warning_sign {
   font-size: 40px;
 }
+.table_row .btn-sm {
+  font-size: 0.75rem;
+}

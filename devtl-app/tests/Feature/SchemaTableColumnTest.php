@@ -384,7 +384,7 @@ class SchemaTableColumnTest extends TestCase
             ->assertRedirect(route('schemas.index'));
     }
 
-    public function testInvalidUpdateSchemaTableColumn()
+    public function testUniqueSchemaTableColumnName()
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
@@ -432,13 +432,20 @@ class SchemaTableColumnTest extends TestCase
             ->sync([$schema->id]);
         $schemaTable = factory('App\Models\SchemaTable')->create([
             'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
         ]);
         $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create([
             'schema_table_id' => $schemaTable->id,
+            'user_id' => Auth::id(),
         ]);
 
         $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
             ->assertOk()
             ->assertJsonStructure(['status']);
+
+        $this->assertSoftDeleted('schema_table_columns', [
+            'id' => $schemaTableColumn->id,
+            'user_id' => Auth::id(),
+        ]);
     }
 }

@@ -201,10 +201,16 @@ class SchemaTableTest extends TestCase
             ->sync([$schema->id]);
         $schemaTable = factory('App\Models\SchemaTable')->create([
             'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
         ]);
 
         $this->get(route('schemaTables.delete', ['schemaTable' => $schemaTable->id]))
             ->assertOk()
             ->assertJsonStructure(['status']);
+
+        $this->assertSoftDeleted('schema_tables', [
+            'id' => $schemaTable->id,
+            'user_id' => Auth::id(),
+        ]);
     }
 }

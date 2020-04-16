@@ -55,8 +55,8 @@ class SaveSchemaTableColumnRequest extends FormRequest
                 ->schemaTableColumns()
                 ->find($this->schemaTableColumns['id'][$i]);
 
-            $unique = 'unique:schema_table_columns,name,'.($existingSchemaTableColumn ? $existingSchemaTableColumn->id : 'null').',id,schema_table_id,'.request()->schemaTable->id;
-            $rules['name.'.$i] = 'required|alpha_dash|max:255|'.$unique;
+            $unique = '|unique:schema_table_columns,name,'.($existingSchemaTableColumn ? $existingSchemaTableColumn->id : 'null').',id,schema_table_id,'.request()->schemaTable->id;
+            $rules['name.'.$i] = 'required|alpha_dash|max:255'.$unique;
         }
 
         return $rules;

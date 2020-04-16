@@ -83,6 +83,24 @@ class RouteServiceProvider extends ServiceProvider
                     ])
             );
         });
+
+        Route::bind('relationship', function ($value) {
+            $relationship = \App\Models\Relationship::select('relationships.*')
+                ->join('schema_table_columns', 'schema_table_columns.id', 'primary_table_id')
+                ->join('schema_tables', 'schema_tables.id', 'schema_table_columns.schema_table_id')
+                ->join('schema_user', 'schema_tables.schema_id', 'schema_user.schema_id')
+                ->where('relationships.id', $value)
+                ->where('schema_user.user_id', Auth::id())
+                ->first();
+
+            return $relationship ?? abort(
+                redirect()->route('schemas.index')
+                    ->with('alert', [
+                        'class' => 'warning',
+                        'message' => __('form.requested_table_not_found'),
+                    ])
+            );
+        });
     }
 
     /**

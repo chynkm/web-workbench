@@ -71,5 +71,6 @@ return [
     'action' => 'Action',
     'no_tables' => 'No tables found',
     'foreign_keys' => 'Foreign keys',
+    'referenced_table' => 'Referenced table',
     'referenced_column' => 'Referenced column',
 ];

@@ -53,10 +53,6 @@ class RelationshipTest extends TestCase
             ->assertRedirect('login');
     }
 
-    // user access
-    // type/length validation
-    // verify table belongs to same schema
-
     public function testUserCanCreateRelationships()
     {
         $this->signIn();
@@ -182,6 +178,68 @@ class RelationshipTest extends TestCase
         ]);
     }
 
+    public function testUserCanUpdateRelationshipsWithSameInput()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'user_id' => Auth::id(),
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+        ]);
+
+        $data['relationships'] = [
+            'id' => [
+                $relationship->id,
+                null, // last row is removed
+            ],
+            'primary_table_column_id' => [
+                $primaryTableColumn->id,
+            ],
+            'foreign_table_id' => [
+                $foreignTable->id,
+            ],
+            'foreign_table_column_id' => [
+                $foreignTableColumn->id,
+            ]
+        ];
+
+        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), $data)
+            ->assertOk()
+            ->assertJsonStructure(['status', 'html']);
+
+        $this->assertDatabaseHas('relationships', [
+            'user_id' => Auth::id(),
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+        ]);
+    }
+
     /**
      * @dataProvider invalidSaveRelationshipProvider
      */
@@ -197,7 +255,7 @@ class RelationshipTest extends TestCase
             'user_id' => Auth::id(),
         ]);
 
-        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), $input)
+        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), ['relationships' => $input])
             ->assertSessionHasErrors($field.'.*');
     }
 
@@ -222,6 +280,330 @@ class RelationshipTest extends TestCase
                 ],
                 'primary_table_column_id'
             ],
+            [
+                [
+                    'id' => [
+                        null,
+                        null, // last row is removed
+                    ],
+                    'primary_table_column_id' => [
+                        null,
+                    ],
+                    'foreign_table_id' => [
+                        1,
+                    ],
+                    'foreign_table_column_id' => [
+                        1,
+                    ]
+                ],
+                'primary_table_column_id'
+            ],
+            [
+                [
+                    'id' => [
+                        null,
+                        null, // last row is removed
+                    ],
+                    'primary_table_column_id' => [
+                        1,
+                    ],
+                    'foreign_table_id' => [
+                        null,
+                    ],
+                    'foreign_table_column_id' => [
+                        1,
+                    ]
+                ],
+                'foreign_table_id'
+            ],
+            [
+                [
+                    'id' => [
+                        null,
+                        null, // last row is removed
+                    ],
+                    'primary_table_column_id' => [
+                        1,
+                    ],
+                    'foreign_table_id' => [
+                        '',
+                    ],
+                    'foreign_table_column_id' => [
+                        1,
+                    ]
+                ],
+                'foreign_table_id'
+            ],
+            [
+                [
+                    'id' => [
+                        null,
+                        null, // last row is removed
+                    ],
+                    'primary_table_column_id' => [
+                        1,
+                    ],
+                    'foreign_table_id' => [
+                        1,
+                    ],
+                    'foreign_table_column_id' => [
+                        null,
+                    ]
+                ],
+                'foreign_table_column_id'
+            ],
+            [
+                [
+                    'id' => [
+                        null,
+                        null, // last row is removed
+                    ],
+                    'primary_table_column_id' => [
+                        1,
+                    ],
+                    'foreign_table_id' => [
+                        1,
+                    ],
+                    'foreign_table_column_id' => [
+                        '',
+                    ]
+                ],
+                'foreign_table_column_id'
+            ],
         ];
     }
+
+    public function testDifferentDatatypeSaveRelationship()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+            'datatype' => 'varchar',
+        ]);
+
+        $data['relationships'] = [
+            'id' => [
+                null,
+                null, // last row is removed
+            ],
+            'primary_table_column_id' => [
+                $primaryTableColumn->id,
+            ],
+            'foreign_table_id' => [
+                $foreignTable->id,
+            ],
+            'foreign_table_column_id' => [
+                $foreignTableColumn->id,
+            ]
+        ];
+
+        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), $data)
+            ->assertSessionHasErrors('foreign_table_column_id.*');
+    }
+
+    public function testSameColumnSaveRelationship()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $data['relationships'] = [
+            'id' => [
+                null,
+                null, // last row is removed
+            ],
+            'primary_table_column_id' => [
+                $primaryTableColumn->id,
+            ],
+            'foreign_table_id' => [
+                $primaryTable->id,
+            ],
+            'foreign_table_column_id' => [
+                $primaryTableColumn->id,
+            ]
+        ];
+
+        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), $data)
+            ->assertSessionHasErrors('foreign_table_column_id.*');
+    }
+
+    public function testDifferentSchemasTableSaveRelationship()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $foreignTable = factory('App\Models\SchemaTable')->create(['user_id' => Auth::id()]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $data['relationships'] = [
+            'id' => [
+                null,
+                null, // last row is removed
+            ],
+            'primary_table_column_id' => [
+                $primaryTableColumn->id,
+            ],
+            'foreign_table_id' => [
+                $foreignTable->id,
+            ],
+            'foreign_table_column_id' => [
+                $foreignTableColumn->id,
+            ]
+        ];
+
+        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), $data)
+            ->assertSessionHasErrors('foreign_table_id.*');
+    }
+
+    public function testUniqueSaveRelationship()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'user_id' => Auth::id(),
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+        ]);
+
+        $data['relationships'] = [
+            'id' => [
+                null,
+                null, // last row is removed
+            ],
+            'primary_table_column_id' => [
+                $primaryTableColumn->id,
+            ],
+            'foreign_table_id' => [
+                $foreignTable->id,
+            ],
+            'foreign_table_column_id' => [
+                $foreignTableColumn->id,
+            ]
+        ];
+
+        $this->post(route('schemaTables.updateRelationships', ['schemaTable' => $primaryTable->id]), $data)
+            ->assertSessionHasErrors('foreign_table_column_id.*');
+    }
+
+    public function testUserCannotDeleteOthersRelationship()
+    {
+        $this->signIn();
+        $relationship = factory('App\Models\Relationship')->create();
+
+        $this->get(route('relationships.delete', ['relationship' => $relationship->id]))
+            ->assertRedirect(route('schemas.index'));
+    }
+
+    public function testUserDeleteRelationship()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'user_id' => Auth::id(),
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+        ]);
+
+        $this->get(route('relationships.delete', ['relationship' => $relationship->id]))
+            ->assertOk()
+            ->assertJsonStructure(['status']);
+
+        $this->assertSoftDeleted('relationships', [
+            'id' => $relationship->id,
+            'user_id' => Auth::id(),
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+        ]);
+    }
+
 }

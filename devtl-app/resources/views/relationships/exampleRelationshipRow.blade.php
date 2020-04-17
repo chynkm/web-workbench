@@ -1,0 +1,32 @@
+<tr class="table_column_relationship">
+    <input type="hidden" name="schema_table_columns[id][]" value="{{ isset($relationship) ? $relationship->id : null }}">
+    <td>
+        <select name="relationships[primary_table_column_id][]" class="form-control primary_table_column_id" aria-labelledby="label-type">
+            @foreach($schemaTableColumns as $schemaTableColumn)
+            <option value="{{ $schemaTableColumn->id }}"{{ isset($relationship) && $relationship->primary_table_column_id == $schemaTableColumn->id ? ' selected' : null }}>{{ $schemaTableColumn->name }}</option>
+            @endforeach
+        </select>
+    </td>
+    <td>
+        <select name="relationships[foreign_table_id][]" class="form-control foreign_table_id" aria-labelledby="label-type">
+            <option value=""{{ ! isset($relationship) ? ' selected' : null }}>@lang('form.select_table')</option>
+            @foreach($schemaTables as $schemaTable)
+            <option value="{{ $schemaTable->id }}"{{ isset($relationship) && $relationship->foreign_table_id == $schemaTable->id ? ' selected' : null }}>{{ $schemaTable->name }}</option>
+            @endforeach
+        </select>
+    </td>
+    <td>
+        <select name="relationships[foreign_table_column_id][]" class="form-control foreign_table_column_id" aria-labelledby="label-type">
+        </select>
+    </td>
+    <td>
+        <button type="button"
+            class="btn btn-danger btn-sm delete_relationship_button"
+            data-href="{{ isset($relationship) ? route('relationships.delete', ['relationship' => $relationship->id]) : null }}"
+            data-item="relationship"
+            data-toggle="modal"
+            data-target="#delete_confirm_modal">
+                <span class="oi oi-x"></span>
+        </button>
+    </td>
+</tr>

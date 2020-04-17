@@ -26,6 +26,11 @@ class SchemaTable extends Model
         return $this->hasMany(SchemaTableHistory::class);
     }
 
+    public function primaryRelationships()
+    {
+        return $this->hasMany(Relationship::class, 'primary_table_id');
+    }
+
     public function createHistory()
     {
         $schemaTableOriginal = $this->getOriginal();

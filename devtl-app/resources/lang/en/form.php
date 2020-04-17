@@ -73,4 +73,5 @@ return [
     'foreign_keys' => 'Foreign keys',
     'referenced_table' => 'Referenced table',
     'referenced_column' => 'Referenced column',
+    'select_table' => 'Select table',
 ];

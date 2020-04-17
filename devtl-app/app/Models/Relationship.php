@@ -10,4 +10,9 @@ class Relationship extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public function primarySchemaTable()
+    {
+        return $this->belongsTo(SchemaTable::class, 'primary_table_id');
+    }
 }

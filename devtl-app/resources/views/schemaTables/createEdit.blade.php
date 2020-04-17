@@ -84,8 +84,10 @@
                     </tr>
                 </thead>
                 <tbody id="foreign_key_tbody">
-                    <tr>
-                    </tr>
+                    @foreach($relationships as $relationship)
+                    @include('relationships.exampleRelationshipRow', compact('schemaTableColumns', 'schemaTables', 'relationship'))
+                    @endforeach
+                    @include('relationships.exampleRelationshipRow', ['schemaTableColumns' => $schemaTableColumns ?? [], 'schemaTables' => $schemaTables, 'relationship' => null] )
                 </tbody>
             </table>
         </div>

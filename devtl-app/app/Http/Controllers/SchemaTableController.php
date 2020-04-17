@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SaveRelationshipRequest;
 use App\Http\Requests\SaveSchemaTableColumnRequest;
 use App\Http\Requests\SaveSchemaTableRequest;
-use App\Models\Relationship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -41,10 +40,17 @@ class SchemaTableController extends Controller
         $schemaTableColumns = $schemaTable->schemaTableColumns
             ->sortBy('order');
 
+        $schemaTables = $schemaTable->schema
+            ->schemaTables
+            ->sortBy('name');
+        $relationships = $schemaTable->primaryRelationships;
+
         return view('schemaTables.createEdit', compact(
             'pageTitle',
             'schemaTable',
             'schemaTableColumns',
+            'schemaTables',
+            'relationships',
         ));
     }
 
@@ -149,15 +155,14 @@ class SchemaTableController extends Controller
                 'foreign_table_column_id' => $relationships['foreign_table_column_id'][$i],
             ];
 
-            $existingRelationship = Relationship::find($relationships['id'][$i]);
+            $existingRelationship = $schemaTable->primaryRelationships()
+                ->find($relationships['id'][$i]);
 
-            if (
-                $existingRelationship
-                && $existingRelationship->primary_table_id == $schemaTable->id
-            ) {
+            if ($existingRelationship) {
                 $existingRelationship->update($data);
             } else {
-                Relationship::create($data);
+                $schemaTable->primaryRelationships()
+                    ->create($data);
             }
         }
 

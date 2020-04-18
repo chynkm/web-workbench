@@ -15,9 +15,9 @@ class CreateSchemaTableHistoriesTable extends Migration
     {
         Schema::create('schema_table_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('schema_table_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('schema_id');
+            $table->foreignId('schema_table_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('schema_id')->constrained();
             $table->string('name', 100);
             $table->string('engine', 20);
             $table->string('collation', 40);
@@ -33,16 +33,6 @@ class CreateSchemaTableHistoriesTable extends Migration
                 ->comment('in pixels');
             $table->timestamp('created_at')
                 ->default(DB::raw('CURRENT_TIMESTAMP'));
-
-            $table->foreign('schema_table_id')
-                ->references('id')
-                ->on('schema_tables');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-            $table->foreign('schema_id')
-                ->references('id')
-                ->on('schemas');
         });
     }
 

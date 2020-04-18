@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Relationship;
 use App\Models\SchemaTable;
 use App\Models\SchemaTableColumn;
+use App\Observers\RelationshipObserver;
 use App\Observers\SchemaTableColumnObserver;
 use App\Observers\SchemaTableObserver;
 use Illuminate\Support\Facades\Config;
@@ -30,5 +32,6 @@ class AppServiceProvider extends ServiceProvider
     {
         SchemaTable::observe(SchemaTableObserver::class);
         SchemaTableColumn::observe(SchemaTableColumnObserver::class);
+        Relationship::observe(RelationshipObserver::class);
     }
 }

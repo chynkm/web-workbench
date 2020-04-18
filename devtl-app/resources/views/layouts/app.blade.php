@@ -12,10 +12,11 @@
         <!-- Bootstrap core CSS -->
         @if (config('app.env') == 'production')
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/open-iconic@1.1.1/font/css/open-iconic-bootstrap.min.css">
         @else
         <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link  rel="stylesheet" href="/vendor/open-iconic/css/open-iconic-bootstrap.min.css">
         @endif
-        <link href="/vendor/open-iconic/css/open-iconic-bootstrap.min.css" rel="stylesheet">
         <link href="{{ mix('css/all.css') }}" rel="stylesheet">
     </head>
     <body>
@@ -94,7 +95,7 @@
             </div>
         </footer>
 
-        <div id="overlay" class="d-none">
+        <div id="overlay" class="d-none" onclick="return false;">
             <div class="text-center">
                 <div class="spinner-border text-primary" role="status">
                     <span class="sr-only">@lang('form.loading')</span>
@@ -112,8 +113,8 @@
         <script src="/js/popper.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
         <script src="/js/jquery-ui.min.js"></script>
-        <script src="/js/leader-line.min.js"></script>
         @endif
+        @yield('js')
         <script src="{{ mix('/js/app.js') }}"></script>
     </body>
 </html>

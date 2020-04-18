@@ -22,9 +22,9 @@ if(! function_exists('removeLastRelationshipRow')) {
     {
         $totalRows = count($relationships['id']) - 1;
         unset($relationships['id'][$totalRows]);
-        unset($relationships['primary_table_column_id'][$totalRows]);
-        unset($relationships['foreign_table_id'][$totalRows]);
         unset($relationships['foreign_table_column_id'][$totalRows]);
+        unset($relationships['primary_table_id'][$totalRows]);
+        unset($relationships['primary_table_column_id'][$totalRows]);
 
         return $relationships;
     }

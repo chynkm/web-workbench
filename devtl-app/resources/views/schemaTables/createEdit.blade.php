@@ -56,8 +56,8 @@
                                     <th class="th_sort_column" title="@lang('form.delete')"><span class="oi oi-trash"></span></th>
                                 </tr>
                             </thead>
-                            <tbody id="table_detail_tbody">
-                                @include('schemaTables.columns', ['schemaTableColumns' => $schemaTableColumns ?? []] )
+                            <tbody id="schema_column_tbody">
+                                @include('schemaTables.columns', compact('schemaTableColumns'))
                                 @include('schemaTableColumns.exampleRow', ['schemaTableColumn' => null])
                             </tbody>
                         </table>
@@ -68,29 +68,36 @@
     </div>
 </div>
 
-<div class="card mb-2">
+<div class="card mb-2" id="relationship_listing">
     <div class="card-header">
         @lang('form.foreign_keys')
     </div>
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th class="th_column_name">@lang('form.column_name')</th>
-                        <th class="th_two_letter">@lang('form.referenced_table')</th>
-                        <th class="th_two_letter">@lang('form.referenced_column')</th>
-                        <th class="th_sort_column" title="@lang('form.delete')"><span class="oi oi-trash"></span></th>
-                    </tr>
-                </thead>
-                <tbody id="foreign_key_tbody">
-                    @foreach($relationships as $relationship)
-                    @include('relationships.exampleRelationshipRow', compact('schemaTableColumns', 'schemaTables', 'relationship'))
-                    @endforeach
-                    @include('relationships.exampleRelationshipRow', ['schemaTableColumns' => $schemaTableColumns ?? [], 'schemaTables' => $schemaTables, 'relationship' => null] )
-                </tbody>
-            </table>
-        </div>
+        <form
+            id="create_relationship_form"
+            class="w-100"
+            @if(isset($schemaTable))
+            action="{{ route('schemaTables.updateRelationships', ['schemaTable' => $schemaTable->id]) }}"
+            @endif
+            onsubmit="return false;">
+            @csrf
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th class="th_column_name">@lang('form.column_name')</th>
+                            <th class="th_referenced_table">@lang('form.referenced_table')</th>
+                            <th class="th_column_name">@lang('form.referenced_column')</th>
+                            <th class="th_delete" title="@lang('form.delete')"><span class="oi oi-trash"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="relationship_tbody">
+                        @include('schemaTables.relationships', compact('schemaTableColumns', 'schemaTables', 'relationships'))
+                        @include('relationships.exampleRelationshipRow', ['schemaTableColumns' => $schemaTableColumns, 'schemaTables' => $schemaTables, 'relationship' => null] )
+                    </tbody>
+                </table>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -107,4 +114,16 @@
         @include('schemaTableColumns.exampleRow', ['schemaTableColumn' => null])
     </tbody>
 </table>
+<table id="relationship_example_row" class="d-none">
+    <tbody>
+        @include('relationships.exampleRelationshipRow', ['schemaTableColumns' => $schemaTableColumns, 'schemaTables' => $schemaTables, 'relationship' => null] )
+    </tbody>
+</table>
+@endsection
+
+@section('js')
+<script type="text/javascript">
+var getRelationshipColumnRoute = "{{ route('schemaTables.referenceColumns') }}";
+var emptyReferenceColumnContent = "<option>@lang('form.select_column')</option>";
+</script>
 @endsection

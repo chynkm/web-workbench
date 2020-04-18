@@ -85,4 +85,6 @@
 </div>
 @endsection
 
-
+@section('js')
+<script src="/js/leader-line.min.js"></script>
+@endsection

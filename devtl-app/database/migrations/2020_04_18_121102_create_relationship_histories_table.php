@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRelationshipsTable extends Migration
+class CreateRelationshipHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,16 @@ class CreateRelationshipsTable extends Migration
      */
     public function up()
     {
-        Schema::create('relationships', function (Blueprint $table) {
+        Schema::create('relationship_histories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('relationship_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('foreign_table_id');
             $table->unsignedBigInteger('foreign_table_column_id');
             $table->unsignedBigInteger('primary_table_id');
             $table->unsignedBigInteger('primary_table_column_id');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('created_at')
+                ->default(DB::raw('CURRENT_TIMESTAMP'));
 
             $table->foreign('foreign_table_id')
                 ->references('id')
@@ -45,6 +46,6 @@ class CreateRelationshipsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('relationships');
+        Schema::dropIfExists('relationship_histories');
     }
 }

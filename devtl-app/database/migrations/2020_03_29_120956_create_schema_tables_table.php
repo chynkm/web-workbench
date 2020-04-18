@@ -15,8 +15,8 @@ class CreateSchemaTablesTable extends Migration
     {
         Schema::create('schema_tables', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('schema_id');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('schema_id')->constrained();
             $table->string('name', 100);
             $table->string('engine', 20);
             $table->string('collation', 40);
@@ -34,16 +34,8 @@ class CreateSchemaTablesTable extends Migration
             $table->integer('width')
                 ->default(250)
                 ->comment('in pixels');
-
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-            $table->foreign('schema_id')
-                ->references('id')
-                ->on('schemas');
         });
     }
 

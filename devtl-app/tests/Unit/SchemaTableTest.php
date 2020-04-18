@@ -35,6 +35,6 @@ class SchemaTableTest extends TestCase
     {
         $schemaTable = factory('App\Models\SchemaTable')->create();
 
-        $this->assertInstanceOf(Collection::class, $schemaTable->primaryRelationships);
+        $this->assertInstanceOf(Collection::class, $schemaTable->foreignRelationships);
     }
 }

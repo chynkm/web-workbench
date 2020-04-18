@@ -13,6 +13,9 @@ body {
   padding-bottom: 10px;
   margin-bottom: 60px; /* Margin bottom by footer height */
 }
+.container {
+  max-width: 1200px;
+}
 .footer {
   position: absolute;
   bottom: 0;
@@ -114,7 +117,12 @@ body {
 #table_column_listing .table_detail {
   height: 500px;
 }
-.table_detail .card-body {
+#relationship_listing .card-body{
+  height: 150px;
+  overflow-y: auto;
+}
+.table_detail .card-body,
+#relationship_listing .card-body {
   padding: 0;
 }
 .table_detail .card-title {
@@ -128,16 +136,22 @@ body {
   background-color: transparent;
   padding: 0.25rem 0.50rem;
 }
-.table_detail .table {
+.table_detail .table,
+#relationship_listing .table {
   margin-bottom: 0;
   font-size: 15px;
 }
-.table_detail .table>tbody>tr>td {
+.table_detail .table>tbody>tr>td,
+#relationship_listing .table>tbody>tr>td {
   padding: 0;
 }
-.table_detail .table input {
+.table_detail .table input,
+#relationship_listing .table input {
   width: 100%;
   border: 0;
+}
+#relationship_listing .table select {
+  width: 100%;
 }
 .table_detail .table input[type="text"] {
   padding-left: 4px;
@@ -148,8 +162,10 @@ body {
 .table_detail .card-title {
   padding: 0.2rem;
 }
-.table_detail .datatype.form-control {
+.table_detail .datatype,
+#relationship_listing .form-control {
   height: inherit;
+  font-size: 15px;
 }
 .table_detail .table th.th_column_name {
   width: 30%;
@@ -170,10 +186,12 @@ body {
   width: 2%;
 }
 .table_detail .table input[type="text"].error_highlight,
-.table_detail .table td.error_highlight {
+.table_detail .table td.error_highlight,
+#relationship_listing .table select.error_highlight {
   background-image: linear-gradient(225deg, #dc3545, #dc3545 8px, transparent 8px, transparent);
 }
-.table_detail .table .btn-sm {
+.table_detail .table .btn-sm,
+#relationship_listing .table .btn-sm {
   padding: .25rem .5rem;
   font-size: .5rem;
 }
@@ -186,9 +204,8 @@ body {
   right: 0;
   bottom: 0;
   background-color: rgba(0,0,0,0.25);
-  z-index: 10;
-  cursor: pointer;
-  pointer-events: none;
+  z-index: 2;
+  display: block;
 }
 #overlay .spinner-border {
   width: 5rem;
@@ -200,4 +217,13 @@ body {
 }
 .table_row .btn-sm {
   font-size: 0.75rem;
+}
+#relationship_listing .table th.th_column_name {
+  width: 30%;
+}
+#relationship_listing .table th.th_referenced_table {
+  width: 38%;
+}
+#relationship_listing .table th.th_delete {
+  width: 2%;
 }

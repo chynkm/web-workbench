@@ -74,4 +74,10 @@ return [
     'referenced_table' => 'Referenced table',
     'referenced_column' => 'Referenced column',
     'select_table' => 'Select table',
+    'select_column' => 'Select column',
+    'the_tables_arent_part_of_same_schema' => 'The tables in row :row_no aren\'t part of the same schema.',
+    'the_column_can_only_be_referenced_once' => 'The column in row :row_no can only be referenced once.',
+    'the_referenced_column_should_have_same_type' => 'The referenced column in row :row_no should have the same type.',
+    'similar_columns_cannot_be_referenced' => 'Similar columns in row :row_no cannot be referenced.',
+    'the_foreign_key_already_exists' => 'The foreign key in row :row_no already exists.',
 ];

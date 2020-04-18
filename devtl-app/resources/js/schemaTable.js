@@ -46,8 +46,8 @@ $(function() {
 var APP = APP || {};
 
 APP.schemaTable = {
-    tableDetailBody: $('#table_detail_tbody'),
-    exampleRow: $('#column_example_row tbody').html(),
+    schemaColumnTbody: $('#schema_column_tbody'),
+    exampleColumnRow: $('#column_example_row tbody').html(),
     tableName: $('#table_name'),
     autoIncrementTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'],
     unsignedTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'],
@@ -57,10 +57,13 @@ APP.schemaTable = {
     columnForm: $('#create_schema_table_column_form'),
     tableErrorDiv: $('#table_error_display_div'),
     tableColumnListing: $('#table_column_listing'),
+    relationshipForm: $('#create_relationship_form'),
+    relationshipTbody: $('#relationship_tbody'),
+    exampleRelationshipRow: $('#relationship_example_row tbody').html(),
     init: function() {
-        this.addRemoveRow();
+        this.addRemoveColumnRow();
         this.setCollationAndEngine();
-        this.disableLastDeleteButton();
+        this.disableLastColumnDeleteButton();
         this.saveTableAndColumns();
         this.deleteTableAndColumn();
         this.sortTableColumns();
@@ -68,6 +71,10 @@ APP.schemaTable = {
         this.zeroFillEvent();
         this.primaryKeyEvent();
         this.onLoadEvents();
+        this.addRemoveRelationshipRow();
+        this.disableLastRelationshipDeleteButton();
+        this.relationshipEvents();
+        this.relationshipOnLoad();
     },
 
     onLoadEvents: function() {
@@ -81,31 +88,31 @@ APP.schemaTable = {
         $('#table_collation').val(this.tableForm.data('collation'));
     },
 
-    addRemoveRow: function() {
+    addRemoveColumnRow: function() {
         var self = this;
 
         // on keyUp; since dynamic row
-        $('#table_detail_tbody').on('keyup', 'tr:last-child .name', function() {
+        this.schemaColumnTbody.on('keyup', 'tr:last-child .name', function() {
             if ($(this).val().length) {
-                self.tableDetailBody.append(self.exampleRow);
+                self.schemaColumnTbody.append(self.exampleColumnRow);
             }
-            self.disableLastDeleteButton();
+            self.disableLastColumnDeleteButton();
         });
 
         // delete last row, if second last_row is empty
-        $('#table_detail_tbody').on('keyup', 'tr:eq(-2) .name', function() {
+        this.schemaColumnTbody.on('keyup', 'tr:eq(-2) .name', function() {
             if ($(this).val().length == 0) {
-                self.tableDetailBody.find('tr:last-child').remove();
+                self.schemaColumnTbody.find('tr:last-child').remove();
             }
-            self.disableLastDeleteButton();
+            self.disableLastColumnDeleteButton();
         });
     },
 
-    disableLastDeleteButton: function() {
-        this.tableDetailBody
+    disableLastColumnDeleteButton: function() {
+        this.schemaColumnTbody
             .find('.delete_column_button')
             .prop('disabled', false);
-        this.tableDetailBody
+        this.schemaColumnTbody
             .find('.delete_column_button')
             .last()
             .prop('disabled', true);
@@ -116,6 +123,9 @@ APP.schemaTable = {
             .find('.is-invalid')
             .removeClass('is-invalid');
         this.columnForm
+            .find('.error_highlight')
+            .removeClass('error_highlight');
+        this.relationshipForm
             .find('.error_highlight')
             .removeClass('error_highlight');
     },
@@ -136,7 +146,8 @@ APP.schemaTable = {
                         if (data.table_url) {
                             self.tableForm.attr('action', data.table_url)
                             self.columnForm.attr('action', data.column_url)
-                            history.pushState(null, '', data.current_url);
+                            self.relationshipForm.attr('action', data.relationship_url)
+                            history.pushState(null, '', data.browser_url);
                         }
 
                         $('#table_title').html(self.tableName.val());
@@ -149,8 +160,6 @@ APP.schemaTable = {
                         $('#table_'+i).addClass('is-invalid')
                     };
                     self.tableErrorDiv.html(data.html);
-                })
-                .always(function() {
                     self.overlay.addClass('d-none');
                 });
         });
@@ -164,17 +173,15 @@ APP.schemaTable = {
         $.post(self.columnForm.attr('action'), columnData)
             .done(function(data) {
                 if (data.status) {
-                    $('#toast_div').html(data.toast);
-                    $('#alert_toast').toast('show');
-
-                    self.tableDetailBody
+                    self.schemaColumnTbody
                         .empty()
                         .append(data.html)
-                        .append(self.exampleRow);
+                        .append(self.exampleColumnRow);
                     self.sortTableColumns();
-                    self.disableLastDeleteButton();
+                    self.disableLastColumnDeleteButton();
 
                     self.onLoadEvents();
+                    self.saveRelationships(self);
                 }
             })
             .fail(function(xhr) {
@@ -188,12 +195,12 @@ APP.schemaTable = {
                         $('.'+field[0]+':eq('+field[1]+')').addClass('error_highlight');
                     }
                 }
-                self.tableErrorDiv.html(data.html);
+                self.overlay.addClass('d-none');
             });
     },
 
     sortTableColumns: function() {
-        this.tableDetailBody
+        this.schemaColumnTbody
             .sortable({
                 handle: '.sort_column_button',
                 cancel: '',
@@ -256,7 +263,7 @@ APP.schemaTable = {
         // COL - AI only for INT types
         var self = this;
 
-        $('#table_detail_tbody').on('click', '.auto_increment_column', function() {
+        this.schemaColumnTbody.on('click', '.auto_increment_column', function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -281,7 +288,7 @@ APP.schemaTable = {
             self.autoIncrementOnLoad();
         });
 
-        $('#table_detail_tbody').on('change', '.datatype', function() {
+        this.schemaColumnTbody.on('change', '.datatype', function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -305,7 +312,7 @@ APP.schemaTable = {
     autoIncrementOnLoad: function() {
         var self = this;
 
-        $('#table_detail_tbody').find('.table_column_row').each(function() {
+        this.schemaColumnTbody.find('.table_column_row').each(function() {
             var row = $(this);
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -332,7 +339,7 @@ APP.schemaTable = {
         // COL - UN available for only INT types
         var self = this;
 
-        $('#table_detail_tbody').on('click', '.zero_fill_column', function() {
+        this.schemaColumnTbody.on('click', '.zero_fill_column', function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -348,7 +355,7 @@ APP.schemaTable = {
             }
         });
 
-        $('#table_detail_tbody').on('change', '.datatype', function() {
+        this.schemaColumnTbody.on('change', '.datatype', function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -366,7 +373,7 @@ APP.schemaTable = {
     zeroFillOnLoad: function() {
         var self = this;
 
-        $('#table_detail_tbody').find('.table_column_row').each(function() {
+        this.schemaColumnTbody.find('.table_column_row').each(function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -392,7 +399,7 @@ APP.schemaTable = {
         // COL - check UN click and NULL/UQ enabled
         var self = this;
 
-        $('#table_detail_tbody').on('click', '.primary_key_column', function() {
+        this.schemaColumnTbody.on('click', '.primary_key_column', function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -415,7 +422,7 @@ APP.schemaTable = {
                 .prop('disabled', true);
         });
 
-        $('#table_detail_tbody').on('change', '.datatype', function() {
+        this.schemaColumnTbody.on('change', '.datatype', function() {
             var row = $(this).closest('.table_column_row');
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -436,7 +443,7 @@ APP.schemaTable = {
     primaryKeyOnLoad: function() {
         var self = this;
 
-        $('#table_detail_tbody').find('.table_column_row').each(function() {
+        this.schemaColumnTbody.find('.table_column_row').each(function() {
             var row = $(this);
             var selectedType = row.find('.datatype option:selected').val();
 
@@ -446,6 +453,118 @@ APP.schemaTable = {
                     .prop('disabled', true);
             }
         });
+    },
+
+    addRemoveRelationshipRow: function() {
+        var self = this;
+
+        // on keyUp; since dynamic row
+        this.relationshipTbody.on('change', 'tr:last-child .primary_table_id', function() {
+            if ($(this).val() != '') {
+                self.relationshipTbody.append(self.exampleRelationshipRow);
+            }
+            self.disableLastRelationshipDeleteButton();
+        });
+
+        // delete last row, if second last_row is empty
+        this.relationshipTbody.on('change', 'tr:eq(-2) .primary_table_id', function() {
+            if ($(this).val().length == '') {
+                self.relationshipTbody.find('tr:last-child').remove();
+            }
+            self.disableLastRelationshipDeleteButton();
+        });
+    },
+
+    disableLastRelationshipDeleteButton: function() {
+        this.relationshipTbody
+            .find('.delete_relationship_button')
+            .prop('disabled', false);
+        this.relationshipTbody
+            .find('.delete_relationship_button')
+            .last()
+            .prop('disabled', true);
+    },
+
+    relationshipEvents: function(triggeredElement) {
+        var self = this;
+
+        this.relationshipTbody.on('change', '.primary_table_id, .foreign_table_column_id', function() {
+            var closestRow = $(this).closest('.table_column_relationship');
+
+            if ($(this).val() == '') {
+                closestRow.find('.primary_table_column_id')
+                    .html(emptyReferenceColumnContent);
+            } else {
+                self.fetchRelationshipColumns(closestRow);
+            }
+        });
+    },
+
+    fetchRelationshipColumns: function(closestRow) {
+        var self = this,
+            primaryTableId = closestRow.find('.primary_table_id').val(),
+            datatype = closestRow.find('.foreign_table_column_id option:selected').data('datatype'),
+            hiddenPrimaryTableColumnId = closestRow.find('.hidden_primary_table_column_id').val();
+
+        if (primaryTableId.length && datatype.length) {
+            this.overlay.removeClass('d-none');
+            $.getJSON(getRelationshipColumnRoute, {
+                    schema_table_id: primaryTableId,
+                    datatype: datatype,
+                })
+                .done(function(data) {
+                    if (data.status) {
+                        closestRow.find('.primary_table_column_id')
+                            .html(data.html);
+                        if (closestRow.find('.primary_table_column_id option[value="'+hiddenPrimaryTableColumnId+'"]').length) {
+                            closestRow.find('.primary_table_column_id')
+                                .val(hiddenPrimaryTableColumnId);
+                        }
+                    }
+                })
+                .always(function() {
+                    self.overlay.addClass('d-none');
+                });
+        }
+    },
+
+    relationshipOnLoad: function() {
+        var self = this;
+
+        this.relationshipTbody.find('.hidden_primary_table_column_id').each(function() {
+            var closestRow = $(this).closest('.table_column_relationship');
+            self.fetchRelationshipColumns(closestRow);
+        });
+    },
+
+    saveRelationships: function(self) {
+        $.post(self.relationshipForm.attr('action'), self.relationshipForm.serialize())
+            .done(function(data) {
+                if (data.status) {
+                    $('#toast_div').html(data.toast);
+                    $('#alert_toast').toast('show');
+
+                    self.relationshipTbody
+                        .empty()
+                        .append(data.html)
+                        .append(self.exampleRelationshipRow);
+                    self.disableLastRelationshipDeleteButton();
+
+                    self.relationshipOnLoad();
+                }
+            })
+            .fail(function(xhr) {
+                var data = xhr.responseJSON;
+                for (var field in data.errors) {
+                    console.log(data.errors);
+                    field = field.split('.');
+                    $('.'+field[0]+':eq('+field[1]+')').addClass('error_highlight');
+                }
+                self.tableErrorDiv.html(data.html);
+            })
+            .always(function() {
+                self.overlay.addClass('d-none');
+            });
     },
 
 };

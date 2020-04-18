@@ -7,20 +7,42 @@ use Faker\Generator as Faker;
 
 $factory->define(SchemaTableColumnHistory::class, function (Faker $faker) {
     return [
-        'user_id' => factory(App\Models\User::class),
-        'schema_table_id' => factory(App\Models\SchemaTable::class),
-        'schema_table_column_id' => function (array $schemaTableColumnHistory) {
-            return factory(App\Models\SchemaTableColumn::class)->create(['schema_table_id' => $schemaTableColumnHistory['schema_table_id']]);
+        'schema_table_column_id' => factory(App\Models\SchemaTableColumn::class),
+        'user_id' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->user_id;
         },
-        'name' => $faker->word,
-        'datatype' => config('env.first_column_datatype'),
-        'length' => config('env.first_column_length'),
-        'primary_key' => 0,
-        'unique' => 0,
-        'zero_fill' => 0,
-        'auto_increment' => 0,
-        'unsigned' => 0,
-        'nullable' => 1,
-        'order' => $faker->randomDigit,
+        'schema_table_id' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->schema_table_id;
+        },
+        'name' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->name;
+        },
+        'datatype' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->datatype;
+        },
+        'length' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->length;
+        },
+        'primary_key' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->primary_key;
+        },
+        'unique' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->unique;
+        },
+        'zero_fill' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->zero_fill;
+        },
+        'auto_increment' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->auto_increment;
+        },
+        'unsigned' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->unsigned;
+        },
+        'nullable' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->nullable;
+        },
+        'order' => function(array $schemaTableColumnHistory) {
+            return App\Models\SchemaTableColumn::find($schemaTableColumnHistory['schema_table_column_id'])->order;
+        },
     ];
 });

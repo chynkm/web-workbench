@@ -7,17 +7,34 @@ use Faker\Generator as Faker;
 
 $factory->define(SchemaTableHistory::class, function (Faker $faker) {
     return [
-        'user_id' => factory(App\Models\User::class),
-        'schema_id' => factory(App\Models\Schema::class),
-        'schema_table_id' => function (array $schemaTableHistory) {
-            return factory(App\Models\SchemaTable::class)->create(['schema_id' => $schemaTableHistory['schema_id']]);
+        'schema_table_id' => factory(App\Models\SchemaTable::class),
+        'user_id' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->user_id;
         },
-        'name' => $faker->word,
-        'engine' => config('env.first_table_engine'),
-        'collation' => config('env.first_table_collation'),
-        'x_index' => 10,
-        'y_index' => 10,
-        'height' => 100,
-        'width' => 250,
+        'schema_id' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->schema_id;
+        },
+        'name' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->name;
+        },
+        'engine' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->engine;
+        },
+        'collation' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->collation;
+        },
+        'x_index' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->x_index;
+        },
+        'y_index' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->y_index;
+        },
+        'height' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->height;
+        },
+        'width' => function(array $schemaTableHistory) {
+            return App\Models\SchemaTable::find($schemaTableHistory['schema_table_id'])->width;
+        },
     ];
 });
+

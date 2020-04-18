@@ -15,16 +15,12 @@ class CreateUserTokensTable extends Migration
     {
         Schema::create('user_tokens', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->constrained();
             $table->string('token', 20);
             $table->timestamp('logged_in')
                 ->nullable();
             $table->timestamp('created_at')
                 ->default(DB::raw('CURRENT_TIMESTAMP'));
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
         });
     }
 

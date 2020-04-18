@@ -15,20 +15,13 @@ class CreateSchemaUserTable extends Migration
     {
         Schema::create('schema_user', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('schema_id');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('schema_id')->constrained();
             $table->boolean('owner')
                 ->default(0);
             $table->timestamp('created_at')
                 ->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->softDeletes();
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-            $table->foreign('schema_id')
-                ->references('id')
-                ->on('schemas');
         });
     }
 

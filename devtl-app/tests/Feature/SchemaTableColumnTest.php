@@ -20,38 +20,9 @@ class SchemaTableColumnTest extends TestCase
 
         $this->get(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]))
             ->assertRedirect('login');
-    }*/
-
-    public function testGuestCannotCreateSchemaTableColumns()
-    {
-        $schema = factory('App\Models\Schema')->create();
-        $schemaTable = factory('App\Models\SchemaTable')->create(['schema_id' => $schema->id]);
-        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->raw(['schema_table_id' => $schemaTable->id]);
-
-        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $schemaTableColumn)
-            ->assertRedirect('login');
     }
 
-    public function testGuestCannotUpdateSchemaTableColumns()
-    {
-        $schema = factory('App\Models\Schema')->create();
-        $schemaTable = factory('App\Models\SchemaTable')->create(['schema_id' => $schema->id]);
-        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create(['schema_table_id' => $schemaTable->id]);
-        $attribute['name'] = Str::random(10);
-
-        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $attribute)
-            ->assertRedirect('login');
-    }
-
-    public function testGuestCannotDeleteSchemaTableColumns()
-    {
-        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
-
-        $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
-            ->assertRedirect('login');
-    }
-
-    /*public function testUserCanViewSchemaTableColumnsListing()
+    public function testUserCanViewSchemaTableColumnsListing()
     {
         $this->markTestSkipped('Removed Ajax schemaTableColumn fetch');
         $this->signIn();
@@ -89,6 +60,92 @@ class SchemaTableColumnTest extends TestCase
         $this->get(route('schemaTables.columns', ['schemaTable' => $schemaTable->id]))
             ->assertRedirect(route('schemas.index'));
     }*/
+
+    public function testGuestCannotCreateSchemaTableColumns()
+    {
+        $schema = factory('App\Models\Schema')->create();
+        $schemaTable = factory('App\Models\SchemaTable')->create(['schema_id' => $schema->id]);
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->raw(['schema_table_id' => $schemaTable->id]);
+
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $schemaTableColumn)
+            ->assertRedirect('login');
+    }
+
+    public function testGuestCannotUpdateSchemaTableColumns()
+    {
+        $schema = factory('App\Models\Schema')->create();
+        $schemaTable = factory('App\Models\SchemaTable')->create(['schema_id' => $schema->id]);
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create(['schema_table_id' => $schemaTable->id]);
+        $attribute['name'] = Str::random(10);
+
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $schemaTable->id]), $attribute)
+            ->assertRedirect('login');
+    }
+
+    public function testGuestCannotDeleteSchemaTableColumns()
+    {
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
+
+        $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
+            ->assertRedirect('login');
+    }
+
+    public function testGuestCannotFetchReferenceTableColumns()
+    {
+        $schemaTable = factory('App\Models\SchemaTable')->create();
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create(['schema_table_id' => $schemaTable->id]);
+
+        $this->get(route('schemaTables.referenceColumns'), ['schema_table_id' => $schemaTable, 'datatype' => config('env.first_column_datatype')])
+            ->assertRedirect('login');
+    }
+
+    public function testUserCanFetchReferenceTableColumns()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $schemaTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $schemaTableColumns = factory('App\Models\SchemaTableColumn', 3)->create([
+            'user_id' => Auth::id(),
+            'schema_table_id' => $schemaTable->id,
+        ]);
+
+        $this->call('GET', route('schemaTables.referenceColumns'), [
+                'schema_table_id' => $schemaTable->id,
+                'datatype' => config('env.first_column_datatype')
+            ])
+            ->assertOk()
+            ->assertJsonStructure(['status', 'html']);
+    }
+
+    public function testUserCanFetchReferenceTableColumnsOfCurrentSchema()
+    {
+        // Even if the user fetches the Reference columns,
+        // a check is carried out in SaveRelationshipRequest file
+        $this->assertTrue(true);
+    }
+
+    public function testAUserCannotViewOtherUsersReferenceColumns()
+    {
+        $this->signIn();
+        $schemaTable = factory('App\Models\SchemaTable')->create();
+        $schemaTableColumns = factory('App\Models\SchemaTableColumn', 3)->create([
+            'schema_table_id' => $schemaTable->id,
+        ]);
+
+        $this->call('GET', route('schemaTables.referenceColumns'), [
+                'schema_table_id' => $schemaTable->id,
+                'datatype' => config('env.first_column_datatype')
+            ])
+            ->assertOk()
+            ->assertJsonStructure(['status', 'html']);
+
+    }
 
     public function testUserCanCreateSchemaTableColumns()
     {

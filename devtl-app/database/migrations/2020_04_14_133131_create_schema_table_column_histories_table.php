@@ -15,9 +15,9 @@ class CreateSchemaTableColumnHistoriesTable extends Migration
     {
         Schema::create('schema_table_column_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('schema_table_column_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('schema_table_id');
+            $table->foreignId('schema_table_column_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('schema_table_id')->constrained();
             $table->string('name');
             $table->string('datatype', 50);
             $table->string('length');
@@ -34,16 +34,6 @@ class CreateSchemaTableColumnHistoriesTable extends Migration
             $table->tinyInteger('order');
             $table->timestamp('created_at')
                 ->default(DB::raw('CURRENT_TIMESTAMP'));
-
-            $table->foreign('schema_table_column_id')
-                ->references('id')
-                ->on('schema_table_columns');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-            $table->foreign('schema_table_id')
-                ->references('id')
-                ->on('schema_tables');
         });
     }
 

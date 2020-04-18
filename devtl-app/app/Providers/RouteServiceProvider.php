@@ -38,9 +38,8 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind('schema', function ($value) {
             $schema = \App\Models\Schema::select('schemas.*')
                 ->join('schema_user', 'schemas.id', 'schema_id')
-                ->where('schemas.id', $value)
                 ->where('user_id', Auth::id())
-                ->first();
+                ->find($value);
 
             return $schema ?? abort(
                 redirect()->route('schemas.index')
@@ -54,9 +53,8 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind('schemaTable', function ($value) {
             $schemaTable = \App\Models\SchemaTable::select('schema_tables.*')
                 ->join('schema_user', 'schema_tables.schema_id', 'schema_user.schema_id')
-                ->where('schema_tables.id', $value)
                 ->where('schema_user.user_id', Auth::id())
-                ->first();
+                ->find($value);
 
             return $schemaTable ?? abort(
                 redirect()->route('schemas.index')
@@ -71,9 +69,8 @@ class RouteServiceProvider extends ServiceProvider
             $schemaTableColumn = \App\Models\SchemaTableColumn::select('schema_table_columns.*')
                 ->join('schema_tables', 'schema_tables.id', 'schema_table_columns.schema_table_id')
                 ->join('schema_user', 'schema_tables.schema_id', 'schema_user.schema_id')
-                ->where('schema_table_columns.id', $value)
                 ->where('schema_user.user_id', Auth::id())
-                ->first();
+                ->find($value);
 
             return $schemaTableColumn ?? abort(
                 redirect()->route('schemas.index')
@@ -89,9 +86,8 @@ class RouteServiceProvider extends ServiceProvider
                 ->join('schema_table_columns', 'schema_table_columns.id', 'primary_table_id')
                 ->join('schema_tables', 'schema_tables.id', 'schema_table_columns.schema_table_id')
                 ->join('schema_user', 'schema_tables.schema_id', 'schema_user.schema_id')
-                ->where('relationships.id', $value)
                 ->where('schema_user.user_id', Auth::id())
-                ->first();
+                ->find($value);
 
             return $relationship ?? abort(
                 redirect()->route('schemas.index')

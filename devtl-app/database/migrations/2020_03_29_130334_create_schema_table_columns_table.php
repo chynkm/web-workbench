@@ -15,8 +15,8 @@ class CreateSchemaTableColumnsTable extends Migration
     {
         Schema::create('schema_table_columns', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('schema_table_id');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('schema_table_id')->constrained();
             $table->string('name');
             $table->string('datatype', 50);
             $table->string('length');
@@ -39,13 +39,6 @@ class CreateSchemaTableColumnsTable extends Migration
             $table->tinyInteger('order');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-            $table->foreign('schema_table_id')
-                ->references('id')
-                ->on('schema_tables');
         });
     }
 

@@ -2,16 +2,39 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Relationship;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Factory;
 use Illuminate\Validation\ValidationException;
 
 class SaveSchemaTableColumnRequest extends FormRequest
 {
 
     protected $schemaTableColumns;
+
+    public function __construct(Factory $factory)
+    {
+        $this->additionalValidation($factory);
+    }
+
+    public function additionalValidation(Factory $factory)
+    {
+        $factory->extend('fk_check', function($attribute, $value, $parameters) {
+            $relationship = Relationship::select('datatype')
+                ->join('schema_table_columns', 'schema_table_id', 'primary_table_column_id')
+                ->where('foreign_table_column_id', $parameters[0])
+                ->first();
+
+            if($relationship === null) {
+                return true;
+            }
+
+            return $relationship->datatype == $value;
+        });
+    }
 
     /**
      * Determine if the user is authorized to make this request.
@@ -38,7 +61,6 @@ class SaveSchemaTableColumnRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'datatype.*' => 'required|alpha_dash|max:50',
             'length.*' => 'max:255',
             'default_value.*' => 'max:255',
             'comment.*' => 'max:255',
@@ -54,6 +76,14 @@ class SaveSchemaTableColumnRequest extends FormRequest
             $existingSchemaTableColumn = request()->schemaTable
                 ->schemaTableColumns()
                 ->find($this->schemaTableColumns['id'][$i]);
+
+            if ($existingSchemaTableColumn) {
+                $rules['datatype.'.$i] = 'required|alpha_dash|max:50|fk_check:'.$existingSchemaTableColumn->id;
+                $unique = '|unique:schema_table_columns,name,'.$existingSchemaTableColumn->id.',id,schema_table_id,'.request()->schemaTable->id;
+            } else {
+                $rules['datatype.'.$i] = 'required|alpha_dash|max:50';
+                $unique = '|unique:schema_table_columns,name,null,id,schema_table_id,'.request()->schemaTable->id;
+            }
 
             $unique = '|unique:schema_table_columns,name,'.($existingSchemaTableColumn ? $existingSchemaTableColumn->id : 'null').',id,schema_table_id,'.request()->schemaTable->id;
             $rules['name.'.$i] = 'required|alpha_dash|max:255'.$unique;
@@ -80,6 +110,16 @@ class SaveSchemaTableColumnRequest extends FormRequest
         }
 
         return $attributes;
+    }
+
+    public function messages()
+    {
+        $messages = [];
+        for($i = 0, $j = 1; $i < count($this->schemaTableColumns['id']); $i++, $j++) {
+            $messages['datatype.'.$i.'.fk_check'] = __('form.foreign_key_datatype_mismatch', ['row_no' => $j]);
+        }
+
+        return $messages;
     }
 
     protected function failedValidation(Validator $validator)

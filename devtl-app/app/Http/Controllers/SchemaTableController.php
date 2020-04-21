@@ -138,8 +138,14 @@ class SchemaTableController extends Controller
         $schemaTableColumns = $schemaTable->schemaTableColumns
             ->sortBy('order');
 
+        $alert = [
+            'class' => 'success',
+            'message' => __('form.table_changes_saved_successfully')
+        ];
+
         return response()->json([
             'status' => true,
+            'toast' => view('layouts.toast', compact('alert'))->render(),
             'html' => view('schemaTables.columns', compact('schemaTableColumns'))->render(),
         ]);
     }
@@ -178,7 +184,7 @@ class SchemaTableController extends Controller
 
         $alert = [
             'class' => 'success',
-            'message' => __('form.table_changes_saved_successfully')
+            'message' => __('form.fk_saved_successfully')
         ];
 
         return response()->json([

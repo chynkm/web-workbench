@@ -51,7 +51,7 @@ APP.schemaTable = {
     tableName: $('#table_name'),
     autoIncrementTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'],
     unsignedTypes: ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'],
-    inputFields: ['name', 'length', 'comment', 'default_value'],
+    inputFields: ['name', 'datatype', 'length', 'comment', 'default_value'],
     overlay: $('#overlay'),
     tableForm: $('#create_schema_table_form'),
     columnForm: $('#create_schema_table_column_form'),
@@ -65,7 +65,7 @@ APP.schemaTable = {
         this.setCollationAndEngine();
         this.disableLastColumnDeleteButton();
         this.saveTableAndColumns();
-        this.deleteTableAndColumn();
+        this.deleteTableAndColumnAndRelationship();
         this.sortTableColumns();
         this.autoIncrementEvent();
         this.zeroFillEvent();
@@ -75,6 +75,7 @@ APP.schemaTable = {
         this.disableLastRelationshipDeleteButton();
         this.relationshipEvents();
         this.relationshipOnLoad();
+        this.saveRelationships();
     },
 
     onLoadEvents: function() {
@@ -133,7 +134,7 @@ APP.schemaTable = {
     saveTableAndColumns: function() {
         var self = this;
 
-        $('#create_schema_table_button').click(function() {
+        $('#save_schema_table_button').click(function() {
             self.overlay.removeClass('d-none');
             self.tableErrorDiv.empty();
             self.clearErrors();
@@ -173,6 +174,9 @@ APP.schemaTable = {
         $.post(self.columnForm.attr('action'), columnData)
             .done(function(data) {
                 if (data.status) {
+                    $('#toast_div').html(data.toast);
+                    $('#alert_toast').toast('show');
+
                     self.schemaColumnTbody
                         .empty()
                         .append(data.html)
@@ -181,7 +185,6 @@ APP.schemaTable = {
                     self.disableLastColumnDeleteButton();
 
                     self.onLoadEvents();
-                    self.saveRelationships(self);
                 }
             })
             .fail(function(xhr) {
@@ -195,6 +198,9 @@ APP.schemaTable = {
                         $('.'+field[0]+':eq('+field[1]+')').addClass('error_highlight');
                     }
                 }
+                self.tableErrorDiv.html(data.html);
+            })
+            .always(function() {
                 self.overlay.addClass('d-none');
             });
     },
@@ -215,7 +221,7 @@ APP.schemaTable = {
             });
     },
 
-    deleteTableAndColumn: function() {
+    deleteTableAndColumnAndRelationship: function() {
         $('#delete_confirm_modal').on('show.bs.modal', function(e) {
             $('#delete_ok').click(function() {
                 switch($(e.relatedTarget).data('item')) {
@@ -232,6 +238,25 @@ APP.schemaTable = {
                             });
                         } else {
                             $(e.relatedTarget).closest('tr.table_column_row')
+                                .addClass('table-danger')
+                                .fadeOut('slow', function() {
+                                    $(this).remove();
+                                });
+                        }
+                        break;
+                    case 'relationship':
+                        if ($(e.relatedTarget).data('href').length) {
+                            $.getJSON($(e.relatedTarget).data('href'), function(data) {
+                                if (data.status) {
+                                    $(e.relatedTarget).closest('tr.table_relationship_row')
+                                        .addClass('table-danger')
+                                        .fadeOut('slow', function() {
+                                            $(this).remove();
+                                        });
+                                }
+                            });
+                        } else {
+                            $(e.relatedTarget).closest('tr.table_relationship_row')
                                 .addClass('table-danger')
                                 .fadeOut('slow', function() {
                                     $(this).remove();
@@ -489,7 +514,7 @@ APP.schemaTable = {
         var self = this;
 
         this.relationshipTbody.on('change', '.primary_table_id, .foreign_table_column_id', function() {
-            var closestRow = $(this).closest('.table_column_relationship');
+            var closestRow = $(this).closest('.table_relationship_row');
 
             if ($(this).val() == '') {
                 closestRow.find('.primary_table_column_id')
@@ -532,13 +557,20 @@ APP.schemaTable = {
         var self = this;
 
         this.relationshipTbody.find('.hidden_primary_table_column_id').each(function() {
-            var closestRow = $(this).closest('.table_column_relationship');
+            var closestRow = $(this).closest('.table_relationship_row');
             self.fetchRelationshipColumns(closestRow);
         });
     },
 
-    saveRelationships: function(self) {
-        $.post(self.relationshipForm.attr('action'), self.relationshipForm.serialize())
+    saveRelationships: function() {
+        var self = this;
+
+        $('#save_relationship_button').click(function() {
+            self.overlay.removeClass('d-none');
+            self.tableErrorDiv.empty();
+            self.clearErrors();
+
+            $.post(self.relationshipForm.attr('action'), self.relationshipForm.serialize())
             .done(function(data) {
                 if (data.status) {
                     $('#toast_div').html(data.toast);
@@ -556,7 +588,6 @@ APP.schemaTable = {
             .fail(function(xhr) {
                 var data = xhr.responseJSON;
                 for (var field in data.errors) {
-                    console.log(data.errors);
                     field = field.split('.');
                     $('.'+field[0]+':eq('+field[1]+')').addClass('error_highlight');
                 }
@@ -565,6 +596,7 @@ APP.schemaTable = {
             .always(function() {
                 self.overlay.addClass('d-none');
             });
+        });
     },
 
 };

@@ -1,4 +1,4 @@
-<tr class="table_column_relationship">
+<tr class="table_relationship_row">
     <input type="hidden" name="relationships[id][]" value="{{ isset($relationship) ? $relationship->id : null }}">
     <td>
         <select name="relationships[foreign_table_column_id][]" class="form-control foreign_table_column_id" aria-labelledby="label-type">

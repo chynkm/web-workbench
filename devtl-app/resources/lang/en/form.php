@@ -65,6 +65,7 @@ return [
     'default' => 'Default',
     'in_row' => 'in row',
     'table_changes_saved_successfully' => 'Table information has been saved successfully.',
+    'fk_saved_successfully' => 'Foreign keys has been saved successfully.',
     'column_deleted_successfully' => 'The column has been deleted successfully.',
     'table_with_name_already_exists' => 'A table with the same name already exists.',
     'no_of_columns' => '# of columns',
@@ -80,4 +81,5 @@ return [
     'the_referenced_column_should_have_same_type' => 'The referenced column in row :row_no should have the same type.',
     'similar_columns_cannot_be_referenced' => 'Similar columns in row :row_no cannot be referenced.',
     'the_foreign_key_already_exists' => 'The foreign key in row :row_no already exists.',
+    'foreign_key_datatype_mismatch' => 'The Type in row :row_no is having a foreign key relationship mismatch.',
 ];

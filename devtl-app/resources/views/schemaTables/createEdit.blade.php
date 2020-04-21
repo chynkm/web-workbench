@@ -64,13 +64,18 @@
                     </div>
                 </form>
             </div>
+            <div class="card-footer text-right">
+                <button type="button" class="btn btn-primary" id="save_schema_table_button">
+                    @lang('form.save')
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="card mb-2" id="relationship_listing">
-    <div class="card-header">
-        @lang('form.foreign_keys')
+    <div class="card-title">
+        <strong>@lang('form.foreign_keys')</strong>
     </div>
     <div class="card-body">
         <form
@@ -99,11 +104,8 @@
             </div>
         </form>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12 text-right">
-        <button type="button" class="btn btn-primary" id="create_schema_table_button">
+    <div class="card-footer text-right">
+        <button type="button" class="btn btn-primary" id="save_relationship_button">
             @lang('form.save')
         </button>
     </div>

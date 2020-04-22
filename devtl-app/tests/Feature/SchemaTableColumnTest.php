@@ -471,7 +471,7 @@ class SchemaTableColumnTest extends TestCase
             ->assertSessionHasErrors('name.*');
     }
 
-    public function testForeignKeyDataTypeMismatchError()
+    public function testForeignKeyForeignTableColumnIdDataTypeMismatchError()
     {
         $this->signIn();
         $schema = factory('App\Models\Schema')->create();
@@ -484,15 +484,16 @@ class SchemaTableColumnTest extends TestCase
         ]);
         $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
             'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
         ]);
 
         $primaryTable = factory('App\Models\SchemaTable')->create([
             'schema_id' => $schema->id,
             'user_id' => Auth::id(),
         ]);
-
         $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
             'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
         ]);
 
         $relationship = factory('App\Models\Relationship')->create([
@@ -545,11 +546,53 @@ class SchemaTableColumnTest extends TestCase
 
         $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $schemaTableColumn->id]))
             ->assertOk()
-            ->assertJsonStructure(['status']);
+            ->assertExactJson(['status' => true]);
 
         $this->assertSoftDeleted('schema_table_columns', [
             'id' => $schemaTableColumn->id,
             'user_id' => Auth::id(),
         ]);
     }
+
+    public function testUserDeleteFailsWhenSchemaTableColumnHasRelationship()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'user_id' => Auth::id(),
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+        ]);
+
+        $this->get(route('schemaTableColumns.delete', ['schemaTableColumn' => $foreignTableColumn->id]))
+            ->assertStatus(422)
+            ->assertJsonStructure(['status', 'html'])
+            ->assertJsonFragment(['status' => false]);
+    }
+
+
 }

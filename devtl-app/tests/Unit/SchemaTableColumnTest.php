@@ -23,4 +23,18 @@ class TableColumnTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $schemaTableColumn->schemaTableColumnHistories);
     }
+
+    public function testSchemaTableColumnHasManyForeignRelationships()
+    {
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
+
+        $this->assertInstanceOf(Collection::class, $schemaTableColumn->foreignRelationships);
+    }
+
+    public function testSchemaTableColumnHasManyPrimaryRelationships()
+    {
+        $schemaTableColumn = factory('App\Models\SchemaTableColumn')->create();
+
+        $this->assertInstanceOf(Collection::class, $schemaTableColumn->primaryRelationships);
+    }
 }

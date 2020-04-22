@@ -25,6 +25,7 @@ class SaveSchemaTableColumnRequest extends FormRequest
         $factory->extend('fk_check', function($attribute, $value, $parameters) {
             $relationship = Relationship::select('datatype')
                 ->join('schema_table_columns', 'schema_table_id', 'primary_table_column_id')
+                ->where('foreign_table_id', request('schemaTable')->id)
                 ->where('foreign_table_column_id', $parameters[0])
                 ->first();
 

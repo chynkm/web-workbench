@@ -222,10 +222,13 @@ APP.schemaTable = {
     },
 
     deleteTableAndColumnAndRelationship: function() {
+        var self = this;
+
         $('#delete_confirm_modal').on('show.bs.modal', function(e) {
             $('#delete_ok').click(function() {
                 switch($(e.relatedTarget).data('item')) {
                     case 'schema_table_column':
+                        self.tableErrorDiv.empty();
                         if ($(e.relatedTarget).data('href').length) {
                             $.getJSON($(e.relatedTarget).data('href'), function(data) {
                                 if (data.status) {
@@ -235,6 +238,10 @@ APP.schemaTable = {
                                             $(this).remove();
                                         });
                                 }
+                            })
+                            .fail(function(xhr) {
+                                var data = xhr.responseJSON;
+                                self.tableErrorDiv.html(data.html);
                             });
                         } else {
                             $(e.relatedTarget).closest('tr.table_column_row')

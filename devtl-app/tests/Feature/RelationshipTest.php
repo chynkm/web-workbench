@@ -666,7 +666,7 @@ class RelationshipTest extends TestCase
 
         $this->get(route('relationships.delete', ['relationship' => $relationship->id]))
             ->assertOk()
-            ->assertJsonStructure(['status']);
+            ->assertExactJson(['status' => true]);
 
         $this->assertSoftDeleted('relationships', [
             'id' => $relationship->id,

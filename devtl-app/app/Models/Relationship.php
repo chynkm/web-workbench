@@ -16,6 +16,16 @@ class Relationship extends Model
         return $this->belongsTo(SchemaTable::class, 'foreign_table_id');
     }
 
+    public function foreignSchemaTableColumn()
+    {
+        return $this->belongsTo(SchemaTableColumn::class, 'foreign_table_column_id');
+    }
+
+    public function primarySchemaTableColumn()
+    {
+        return $this->belongsTo(SchemaTableColumn::class, 'primary_table_column_id');
+    }
+
     public function relationshipHistories()
     {
         return $this->hasMany(RelationshipHistory::class);

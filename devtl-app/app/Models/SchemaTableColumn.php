@@ -21,6 +21,16 @@ class SchemaTableColumn extends Model
         return $this->hasMany(SchemaTableColumnHistory::class);
     }
 
+    public function foreignRelationships()
+    {
+        return $this->hasMany(Relationship::class, 'foreign_table_column_id');
+    }
+
+    public function primaryRelationships()
+    {
+        return $this->hasMany(Relationship::class, 'primary_table_column_id');
+    }
+
     public function createHistory()
     {
         $schemaTableColumnOriginal = $this->getOriginal();

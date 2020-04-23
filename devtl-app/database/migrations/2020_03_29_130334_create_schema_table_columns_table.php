@@ -19,7 +19,8 @@ class CreateSchemaTableColumnsTable extends Migration
             $table->foreignId('schema_table_id')->constrained();
             $table->string('name');
             $table->string('datatype', 50);
-            $table->string('length');
+            $table->string('length')
+                ->nullable();
             $table->boolean('primary_key')
                 ->default(0);
             $table->boolean('nullable')

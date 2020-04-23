@@ -519,6 +519,54 @@ class SchemaTableColumnTest extends TestCase
             ->assertSessionHasErrors('datatype.*');
     }
 
+    public function testForeignKeyPrimaryTableColumnIdDataTypeMismatchError()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'user_id' => Auth::id(),
+            'foreign_table_id' => $primaryTable->id,
+            'foreign_table_column_id' => $primaryTableColumn->id,
+            'primary_table_id' => $foreignTable->id,
+            'primary_table_column_id' => $foreignTableColumn->id,
+        ]);
+
+        $attributes['schema_table_columns']['id'] = [
+            $foreignTableColumn->id,
+            'null'
+        ];
+        $attributes['schema_table_columns']['name'] = [
+            $foreignTableColumn->name,
+        ];
+        $attributes['schema_table_columns']['datatype'] = [
+            'timestamp',
+        ];
+
+        $this->post(route('schemaTables.updateColumns', ['schemaTable' => $foreignTable->id]), $attributes)
+            ->assertSessionHasErrors('datatype.*');
+    }
+
     public function testUserCannotDeleteOthersSchemaTableColumn()
     {
         $this->signIn();
@@ -593,6 +641,5 @@ class SchemaTableColumnTest extends TestCase
             ->assertJsonStructure(['status', 'html'])
             ->assertJsonFragment(['status' => false]);
     }
-
 
 }

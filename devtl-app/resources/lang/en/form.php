@@ -81,6 +81,6 @@ return [
     'the_referenced_column_should_have_same_type' => 'The referenced column in row :row_no should have the same type.',
     'similar_columns_cannot_be_referenced' => 'Similar columns in row :row_no cannot be referenced.',
     'the_foreign_key_already_exists' => 'The foreign key in row :row_no already exists.',
-    'foreign_key_datatype_mismatch' => 'The Type in row :row_no is having a foreign key relationship mismatch.',
+    'foreign_key_datatype_mismatch' => 'A Type mismatch has occurred in row :row_no foreign key relationship.',
     'fk_relationship_exists_for_delete_column' => 'Please remove all foreign key associations to delete the column.',
 ];

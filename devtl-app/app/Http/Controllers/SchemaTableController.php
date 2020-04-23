@@ -175,12 +175,7 @@ class SchemaTableController extends Controller
             }
         }
 
-        $schemaTableColumns = $schemaTable->schemaTableColumns
-            ->sortBy('order');
-        $schemaTables = $schemaTable->schema
-            ->schemaTables
-            ->sortBy('name');
-        $relationships = $schemaTable->foreignRelationships;
+        $commonView = $this->relationshipView($schemaTable);
 
         $alert = [
             'class' => 'success',
@@ -190,8 +185,38 @@ class SchemaTableController extends Controller
         return response()->json([
             'status' => true,
             'toast' => view('layouts.toast', compact('alert'))->render(),
-            'html' => view('schemaTables.relationships', compact('schemaTableColumns', 'schemaTables', 'relationships'))->render(),
+            'html' => $commonView['relationships'],
         ]);
+    }
+
+    protected function relationshipView($schemaTable)
+    {
+        $schemaTableColumns = $schemaTable->schemaTableColumns
+            ->sortBy('order');
+        $schemaTables = $schemaTable->schema
+            ->schemaTables
+            ->sortBy('name');
+        $relationships = $schemaTable->foreignRelationships;
+
+        return [
+            'exampleRelationshipRow' => view('relationships.exampleRelationshipRow', [
+                'schemaTableColumns' => $schemaTableColumns,
+                'schemaTables' => $schemaTables,
+                'relationship' => null
+            ])->render(),
+            'relationships' => view('schemaTables.relationships', compact(
+                'schemaTableColumns',
+                'schemaTables',
+                'relationships'
+            ))->render(),
+        ];
+    }
+
+    public function relationships($schemaTable)
+    {
+        $commonView = $this->relationshipView($schemaTable);
+
+        return response()->json(['status' => true]+$commonView);
     }
 
     public function referenceColumns(Request $request)

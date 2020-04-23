@@ -118,14 +118,17 @@
 </table>
 <table id="relationship_example_row" class="d-none">
     <tbody>
-        @include('relationships.exampleRelationshipRow', ['schemaTableColumns' => $schemaTableColumns, 'schemaTables' => $schemaTables, 'relationship' => null] )
+        @include('relationships.exampleRelationshipRow', ['schemaTableColumns' => $schemaTableColumns, 'schemaTables' => $schemaTables, 'relationship' => null])
     </tbody>
 </table>
 @endsection
 
 @section('js')
 <script type="text/javascript">
-var getRelationshipColumnRoute = "{{ route('schemaTables.referenceColumns') }}";
+var routes = {
+    getRelationshipColumn: "{{ route('schemaTables.referenceColumns') }}",
+    getRelationships: "{{ route('schemaTables.relationships', ['schemaTable' => $schemaTable->id]) }}",
+}
 var emptyReferenceColumnContent = "<option>@lang('form.select_column')</option>";
 </script>
 @endsection

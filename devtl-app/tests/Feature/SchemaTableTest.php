@@ -213,4 +213,80 @@ class SchemaTableTest extends TestCase
             'user_id' => Auth::id(),
         ]);
     }
+
+    public function testGuestCannotFetchRelationships()
+    {
+        $schemaTable = factory('App\Models\SchemaTable')->create();
+
+        $this->get(route('schemaTables.relationships', ['schemaTable' => $schemaTable->id]))
+            ->assertRedirect('login');
+    }
+
+    public function testUserCanFetchRelationships()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        Auth::user()
+            ->schemas()
+            ->sync([$schema->id]);
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+            'user_id' => Auth::id(),
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'user_id' => Auth::id(),
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+        ]);
+
+        $this->get(route('schemaTables.relationships', ['schemaTable' => $foreignTable->id]))
+            ->assertOk()
+            ->assertJsonFragment(['status' => true])
+            ->assertJsonStructure(['status', 'exampleRelationshipRow', 'relationships']);
+    }
+
+    public function testAUserCannotFetchOtherUsersRelationships()
+    {
+        $this->signIn();
+        $schema = factory('App\Models\Schema')->create();
+        $foreignTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+        ]);
+        $foreignTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $foreignTable->id,
+        ]);
+
+        $primaryTable = factory('App\Models\SchemaTable')->create([
+            'schema_id' => $schema->id,
+        ]);
+        $primaryTableColumn = factory('App\Models\SchemaTableColumn')->create([
+            'schema_table_id' => $primaryTable->id,
+        ]);
+
+        $relationship = factory('App\Models\Relationship')->create([
+            'foreign_table_id' => $foreignTable->id,
+            'foreign_table_column_id' => $foreignTableColumn->id,
+            'primary_table_id' => $primaryTable->id,
+            'primary_table_column_id' => $primaryTableColumn->id,
+        ]);
+
+        $this->get(route('schemaTables.relationships', ['schemaTable' => $foreignTable->id]))
+            ->assertRedirect(route('schemas.index'));
+    }
 }

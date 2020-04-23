@@ -23,17 +23,20 @@ class SaveSchemaTableColumnRequest extends FormRequest
     public function additionalValidation(Factory $factory)
     {
         $factory->extend('fk_check', function($attribute, $value, $parameters) {
-            $relationship = Relationship::select('datatype')
-                ->join('schema_table_columns', 'schema_table_id', 'primary_table_column_id')
-                ->where('foreign_table_id', request('schemaTable')->id)
+            $rows = Relationship::select('stc1.datatype', 'stc2.datatype')
+                ->join('schema_table_columns as stc1', 'stc1.id', 'foreign_table_column_id')
+                ->join('schema_table_columns as stc2', 'stc2.id', 'primary_table_column_id')
                 ->where('foreign_table_column_id', $parameters[0])
-                ->first();
+                ->orWhere('primary_table_column_id', $parameters[0])
+                ->get();
 
-            if($relationship === null) {
-                return true;
+            foreach ($rows as $row) {
+                if ($row->datatype != $value) {
+                    return false;
+                }
             }
 
-            return $relationship->datatype == $value;
+            return true;
         });
     }
 

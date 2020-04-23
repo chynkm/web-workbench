@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('schema-tables/reference-columns', ['as' => 'schemaTables.referenceColumns', 'uses' => 'SchemaTableController@referenceColumns']);
     Route::post('schema-tables/{schemaTable}/columns', ['as' => 'schemaTables.updateColumns', 'uses' => 'SchemaTableController@updateColumns']);
     Route::post('schema-tables/{schemaTable}/relationships', ['as' => 'schemaTables.updateRelationships', 'uses' => 'SchemaTableController@updateRelationships']);
+    Route::get('schema-tables/{schemaTable}/relationships', ['as' => 'schemaTables.relationships', 'uses' => 'SchemaTableController@relationships']);
 
     Route::get('schema-table-columns/{schemaTableColumn}/delete', ['as' => 'schemaTableColumns.delete', 'uses' => 'SchemaTableColumnController@delete']);
 

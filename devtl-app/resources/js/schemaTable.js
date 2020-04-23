@@ -184,6 +184,7 @@ APP.schemaTable = {
                     self.sortTableColumns();
                     self.disableLastColumnDeleteButton();
 
+                    self.populateRelationships();
                     self.onLoadEvents();
                 }
             })
@@ -199,8 +200,6 @@ APP.schemaTable = {
                     }
                 }
                 self.tableErrorDiv.html(data.html);
-            })
-            .always(function() {
                 self.overlay.addClass('d-none');
             });
     },
@@ -237,6 +236,9 @@ APP.schemaTable = {
                                         .fadeOut('slow', function() {
                                             $(this).remove();
                                         });
+
+                                    self.overlay.removeClass('d-none');
+                                    self.populateRelationships();
                                 }
                             })
                             .fail(function(xhr) {
@@ -540,7 +542,7 @@ APP.schemaTable = {
 
         if (primaryTableId.length && datatype.length) {
             this.overlay.removeClass('d-none');
-            $.getJSON(getRelationshipColumnRoute, {
+            $.getJSON(routes.getRelationshipColumn, {
                     schema_table_id: primaryTableId,
                     datatype: datatype,
                 })
@@ -558,6 +560,24 @@ APP.schemaTable = {
                     self.overlay.addClass('d-none');
                 });
         }
+    },
+
+    populateRelationships: function() {
+        var self = this;
+
+        $.getJSON(routes.getRelationships)
+            .done(function(data) {
+                if (data.status) {
+                    self.exampleRelationshipRow = data.exampleRelationshipRow;
+                    self.relationshipTbody
+                        .empty()
+                        .append(data.relationships)
+                        .append(self.exampleRelationshipRow);
+                    self.disableLastRelationshipDeleteButton();
+
+                    self.relationshipOnLoad();
+                }
+            });
     },
 
     relationshipOnLoad: function() {
@@ -599,8 +619,6 @@ APP.schemaTable = {
                     $('.'+field[0]+':eq('+field[1]+')').addClass('error_highlight');
                 }
                 self.tableErrorDiv.html(data.html);
-            })
-            .always(function() {
                 self.overlay.addClass('d-none');
             });
         });
